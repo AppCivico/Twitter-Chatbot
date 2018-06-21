@@ -66,8 +66,18 @@ app.post('/webhook/twitter', (request, response) => {
 	if (request.body.direct_message_indicate_typing_events) {
 		console.log('Um usuário externo está digitando');
 	} else {
+		if (request.body.direct_message_events) {
+			console.log(request.body);
+			const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
+			const senderId = request.body.direct_message_events[0].message_create.sender_id;
+			console.log(`${recipientId} recebeu uma mensagem de ${senderId}`);
+
+			const ourName = request.body.users[recipientId].name;
+			const theirName = request.body.users[senderId].name;
+			console.log(`${ourName} recebeu uma mensagem de ${theirName}`);
+		}
 		console.log('Nós recebemos isso: \n');
-		console.log(request.body);
+		// console.log(request.body);
 
 		socket.io.emit(socket.activity_event, {
 			internal_id: uuid(),
