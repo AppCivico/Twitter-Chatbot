@@ -1,0 +1,7 @@
+{
+  "name": "Twitter-Chatbot",
+  "description": "A test for account activity api",
+  "repository": "https://github.com/JordanVScher/Twitter-Chatbot",
+  "keywords": ["node", "express", "api", "webhook", "twitter"],
+  "success_url": "/"
+}

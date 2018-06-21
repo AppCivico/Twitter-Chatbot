@@ -1,0 +1,51 @@
+Setting up Twitter Account Api (Premium - Free Tier)
+
+https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/guides/getting-started-with-webhooks
+
+1.
+Create an app on https://apps.twitter.com/
+->Change Permission to Accept "Read, Write and Access direct messages"
+->Get your Consumer Key and Consumer Secret (Store them somewhere)
+->Create your Access Token Key and Access Token Secret (Store them somewhere)
+
+2.
+Create an environment on https://developer.twitter.com/en/account/environments
+->Set Up dev env on "Account Activity API Sandbox" (A dialog box will show up)
+->Set up your Dev environment label(e.g. "Prod"). This will be used twice 
+->Select the app you just created
+
+3.
+Setup the project
+->git clone https://github.com/twitterdev/account-activity-dashboard.git and cd into it
+->npm install
+->Duplicate config.sample.json
+->Fill the consumer key, consumer secret, Access Token key and Access Token secret
+->Full "TWITTER_WEBHOOK_ENV" with your Dev environment label(e.g. "Prod")
+->npm start (it's goint to run on port 5000)
+->Run ./ngrok http 5000 -> save the URL (e.g. https://9eb889bb.ngrok.io )
+->Change USER and PASSWORD (optional) 
+
+4.
+Setup webhook
+->revisit your apps.twitter.com Settings page, and add the following URL values as whitelisted Callback URLs:
+https://9eb889bb.ngrok.io/callbacks/addsub
+https://9eb889bb.ngrok.io/callbacks/removesub
+Don't forget to save changes usings "Update Settings" below
+
+->Run node example_scripts/webhook_management/create-webhook-config.js -e <environment> -u <url>
+Where <environment> is Dev environment label(e.g. "Prod") 
+And <url> is your ngrok url + /webhook/twitter
+Like this: node example_scripts/webhook_management/create-webhook-config.js -e Prod -u https://9eb889bb.ngrok.io/webhook/twitter
+
+->Add a user subscription for the user that owns the app:
+node example_scripts/subscription_management/add-subscription-app-owner.js -e <environment>
+node example_scripts/subscription_management/add-subscription-app-owner.js -e Prod
+
+There! Now everything that happens to the app owner will be connected to the webhook
+
+->To add a user subscription for another user using PIN-based Twitter sign-in.
+    node example_scripts/subscription_management/add-subscription-other-user.js -e <environment>
+Note: More example scripts can be found in the example_scripts directory to:
+    Create, delete, retrieve and validate webhook configs.
+    Add, remove, retrieve, count and list user subscriptions.
+
