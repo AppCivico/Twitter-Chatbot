@@ -9,7 +9,7 @@ const security = require('./helpers/security');
 const auth = require('./helpers/auth');
 const cacheRoute = require('./helpers/cache-route');
 const socket = require('./helpers/socket');
-const Request = require('request');
+const Request = require('request-promise');
 
 // const config = require('./config');
 // const Twit = require('twit');
@@ -88,29 +88,35 @@ app.post('/webhook/twitter', (request, response) => {
 			// msgText = msgText.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
 			console.log(`A mensagem foi: ${msgText}`);
 
-			Request.post(
-				{
-					url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-					json: {
-						event: {
-							type: 'message_create',
-							message_create: {
-								target: {
-									recipient_id: recipientId,
-								},
-								message_data: {
-									text: 'Hello World!',
-								},
+			// request options
+			const requestOptions = {
+				url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
+				oauth: auth.twitter_oauth,
+				headers: {
+					'Content-type': 'application/x-www-form-urlencoded',
+				},
+				json: {
+					event: {
+						type: 'message_create',
+						message_create: {
+							target: {
+								recipient_id: recipientId,
+							},
+							message_data: {
+								text: 'Hello World!',
 							},
 						},
 					},
 				},
-				(err, httpResponse, body) => {
-					console.log('err =>', err);
-					// console.log('httpResponse =>', httpResponse);
-					console.log('body =>', body);
-				},
-			);
+			};
+
+
+			// POST request to create webhook config
+			Request.post(requestOptions).then((body) => {
+				console.log(body);
+			}).catch((body) => {
+				console.log(body);
+			});
 
 
 			// Request.post(
@@ -124,32 +130,7 @@ app.post('/webhook/twitter', (request, response) => {
 			// 						recipient_id: recipientId,
 			// 					},
 			// 					message_data: {
-			// 						text: "What's your favorite type of bird?",
-			// 						quick_reply: {
-			// 							type: 'options',
-			// 							options: [
-			// 								{
-			// 									label: 'Red Bird',
-			// 									description: 'A description about the red bird.',
-			// 									metadata: 'external_id_1',
-			// 								},
-			// 								{
-			// 									label: 'Blue Bird',
-			// 									description: 'A description about the blue bird.',
-			// 									metadata: 'external_id_2',
-			// 								},
-			// 								{
-			// 									label: 'Black Bird',
-			// 									description: 'A description about the black bird.',
-			// 									metadata: 'external_id_3',
-			// 								},
-			// 								{
-			// 									label: 'White Bird',
-			// 									description: 'A description about the white bird.',
-			// 									metadata: 'external_id_4',
-			// 								},
-			// 							],
-			// 						},
+			// 						text: 'Hello World!',
 			// 					},
 			// 				},
 			// 			},
@@ -159,18 +140,6 @@ app.post('/webhook/twitter', (request, response) => {
 			// 		console.log('err =>', err);
 			// 		// console.log('httpResponse =>', httpResponse);
 			// 		console.log('body =>', body);
-			// 	},
-			// );
-
-
-			// T.post(
-			// 	'direct_messages/events/new ',
-			// 	{ type: 'message_create', 'message_create.target.recipient_id': senderId, 'message_create.message_data': `Você disse: ${msgText}` },
-			// 	(err, data) => {
-			// 		// console.log('Respondemos de boa');
-			// 		console.log('err =>', err);
-			// 		console.log('data =>', data);
-			// 		// ourID = data.sender_id_str;
 			// 	},
 			// );
 		}

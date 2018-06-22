@@ -1,20 +1,18 @@
-const request = require('request-promise')
-const auth = require('../../helpers/auth.js')
+const request = require('request-promise');
+const auth = require('../../helpers/auth.js');
 
 
-auth.get_twitter_bearer_token().then(function (bearer_token) {
+auth.get_twitter_bearer_token().then((bearerToken) => {
+	// request options
+	const requestOptions = {
+		url: 'https://api.twitter.com/1.1/account_activity/all/count.json',
+		auth: {
+			bearer: bearerToken,
+		},
+	};
 
-  // request options
-  var request_options = {
-    url: 'https://api.twitter.com/1.1/account_activity/all/count.json',
-    auth: {
-      'bearer': bearer_token
-    }
-  }
-
-  request.get(request_options).then(function (body) {
-    console.log(body)
-  })
-})
-
+	request.get(requestOptions).then((body) => {
+		console.log(body);
+	});
+});
 

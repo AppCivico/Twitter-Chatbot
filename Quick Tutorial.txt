@@ -49,3 +49,8 @@ Note: More example scripts can be found in the example_scripts directory to:
     Create, delete, retrieve and validate webhook configs.
     Add, remove, retrieve, count and list user subscriptions.
 
+-----
+Change the webhooks on twitter apps settings first
+Before changing running create-webhook.config.js again, run delete-config-webhook:
+node example_scripts/webhook_management/delete-webhook-config.js -e dev -u https://9eb889bb.ngrok.io/webhook/twitter
+
