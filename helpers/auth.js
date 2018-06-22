@@ -134,5 +134,4 @@ auth.get_twitter_bearer_token = () => {
 	}));
 };
 
-
 module.exports = auth;

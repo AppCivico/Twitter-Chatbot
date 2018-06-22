@@ -70,11 +70,14 @@ app.get('/webhook/twitter', (request, response) => {
  * */
 app.post('/webhook/twitter', (request, response) => {
 	if (request.body.direct_message_indicate_typing_events) {
-		console.log('Um usuário externo está digitando');
-	} else {
-		if (request.body.direct_message_events) {
-			const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
-			const senderId = request.body.direct_message_events[0].message_create.sender_id;
+		// console.log('Um usuário externo está digitando');
+		// console.log(request.body);
+	} else if (request.body.direct_message_events) {
+		const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
+		const senderId = request.body.direct_message_events[0].message_create.sender_id;
+		// filtering out events with less than two users
+		if (Object.keys(request.body.users).length >= 2) {
+			console.log('------------------------');
 			console.log(`${recipientId} recebeu uma mensagem de ${senderId}`);
 
 			const ourName = request.body.users[recipientId].name;
@@ -93,23 +96,22 @@ app.post('/webhook/twitter', (request, response) => {
 				url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
 				oauth: auth.twitter_oauth,
 				headers: {
-					'Content-type': 'application/x-www-form-urlencoded',
+					'Content-type': 'application/json',
 				},
 				json: {
 					event: {
 						type: 'message_create',
 						message_create: {
 							target: {
-								recipient_id: recipientId,
+								recipient_id: senderId,
 							},
 							message_data: {
-								text: 'Hello World!',
+								text: `Você me disse: ${msgText}`,
 							},
 						},
 					},
 				},
 			};
-
 
 			// POST request to create webhook config
 			Request.post(requestOptions).then((body) => {
@@ -117,34 +119,9 @@ app.post('/webhook/twitter', (request, response) => {
 			}).catch((body) => {
 				console.log(body);
 			});
-
-
-			// Request.post(
-			// 	{
-			// 		url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-			// 		json: {
-			// 			event: {
-			// 				type: 'message_create',
-			// 				message_create: {
-			// 					target: {
-			// 						recipient_id: recipientId,
-			// 					},
-			// 					message_data: {
-			// 						text: 'Hello World!',
-			// 					},
-			// 				},
-			// 			},
-			// 		},
-			// 	},
-			// 	(err, httpResponse, body) => {
-			// 		console.log('err =>', err);
-			// 		// console.log('httpResponse =>', httpResponse);
-			// 		console.log('body =>', body);
-			// 	},
-			// );
 		}
-		console.log('\n\nNós recebemos isso:');
-		console.log(request.body);
+		// console.log('\n\nNós recebemos isso:');
+		// console.log(request.body);
 
 		socket.io.emit(socket.activity_event, {
 			internal_id: uuid(),
@@ -163,12 +140,10 @@ app.get('/', (request, response) => {
 	response.render('index');
 });
 
-
 /**
  * Subscription management
  * */
 app.get('/subscriptions', auth.basic, cacheRoute(1000), require('./routes/subscriptions'));
-
 
 /**
  * Starts Twitter sign-in process for adding a user subscription
@@ -184,7 +159,6 @@ app.get('/subscriptions/remove', passport.authenticate('twitter', {
 	callbackURL: '/callbacks/removesub',
 }));
 
-
 /**
  * Webhook management routes
  * */
@@ -195,12 +169,10 @@ app.post('/webhook/update', parseForm, auth.csrf, webhookView.update_config);
 app.post('/webhook/validate', parseForm, auth.csrf, webhookView.validate_config);
 app.post('/webhook/delete', parseForm, auth.csrf, webhookView.delete_config);
 
-
 /**
  * Activity view
  * */
 app.get('/activity', auth.basic, require('./routes/activity'));
-
 
 /**
  * Handles Twitter sign-in OAuth1.0a callbacks
