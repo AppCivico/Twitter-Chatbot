@@ -6,19 +6,15 @@ const passport = require('passport');
 // const TwitterStrategy = require('passport-twitter');
 const uuid = require('uuid/v4');
 const security = require('./helpers/security');
-// const auth = require('./helpers/auth');
-const auth = require('./helpers/auth-other-user');
+const auth = require('./helpers/auth');
+const userOauth = require('./helpers/auth-other-user');
 const cacheRoute = require('./helpers/cache-route');
 const socket = require('./helpers/socket');
 const Request = require('request-promise');
 
-// const config = require('./config');
-// const Twit = require('twit');
-
-// const T = new Twit(config.credencials);
-
-
 const app = express();
+
+const ourUsers = process.env.OUR_USERS.split(',');
 
 app.set('port', (process.env.PORT || 5000));
 app.set('views', `${__dirname}/views`);
@@ -65,37 +61,48 @@ app.get('/webhook/twitter', (request, response) => {
 	}
 });
 
-
 /* *
  * Receives Account Acitivity events
  * */
 app.post('/webhook/twitter', (request, response) => {
+	// console.log('\n\nNós recebemos isso:');
+	// console.log(request.body);
 	if (request.body.direct_message_indicate_typing_events) {
 		// console.log('Um usuário externo está digitando');
 		// console.log(request.body);
 	} else if (request.body.direct_message_events) {
 		const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
 		const senderId = request.body.direct_message_events[0].message_create.sender_id;
-		// filtering out events with less than two users
-		if (Object.keys(request.body.users).length >= 2) {
-			console.log('------------------------');
-			console.log(`${recipientId} recebeu uma mensagem de ${senderId}`);
-
+		// if: event is not happening to the same user who started it
+		// and: who's receving the message is not one of our subscribed users
+		if (senderId !== request.body.for_user_id && (!ourUsers.includes(recipientId))) {
 			const ourName = request.body.users[recipientId].name;
 			const theirName = request.body.users[senderId].name;
-			console.log(`${ourName} recebeu uma mensagem de ${theirName}`);
 
-			const msgText = request.body.direct_message_events[0].message_create.message_data.text;
 			// removing emojis from message text
 			// .replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|
 			// \uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, '');
 			// msgText = msgText.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+			const msgText = request.body.direct_message_events[0].message_create.message_data.text;
+			let message = `Você me disse: ${msgText}\nAcertei?`;
+			if (request.body.direct_message_events[0].message_create.message_data.quick_reply_response) {
+				const quickButton = request.body.direct_message_events[0].message_create.message_data.quick_reply_response.metadata; // eslint-disable-line max-len
+				console.log(`O botão ${quickButton} foi pressionado`);
+				message = `Você clicou no botão "${msgText}". Acertei?`;
+			}
+
+			console.log('------------------------');
+			console.log(`${recipientId} recebeu uma mensagem de ${senderId}`);
+			console.log(`${ourName} recebeu uma mensagem de ${theirName}`);
 			console.log(`A mensagem foi: ${msgText}`);
 
+			// console.log(request.body.direct_message_events[0].message_create.message_data);
+
+			const oauth = userOauth.getAuth(recipientId);
 			// request options
 			const requestOptions = {
 				url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-				oauth: auth.twitter_oauth,
+				oauth: oauth.twitter_oauth,
 				headers: {
 					'Content-type': 'application/json',
 				},
@@ -107,22 +114,36 @@ app.post('/webhook/twitter', (request, response) => {
 								recipient_id: senderId,
 							},
 							message_data: {
-								text: `Você me disse: ${msgText}`,
+								text: message,
+								quick_reply: {
+									type: 'options',
+									options: [
+										{
+											label: 'Sim',
+											// description: 'Você acertou o que eu disse',
+											metadata: 'external_id_1',
+										},
+										{
+											label: 'Não',
+											// description: 'Você errou!',
+											metadata: 'external_id_2',
+										},
+									],
+								},
 							},
 						},
 					},
 				},
 			};
 
-			// POST request to create webhook config
-			Request.post(requestOptions).then((body) => {
-				console.log(body);
-			}).catch((body) => {
-				console.log(body);
+			// POST request to send our DM
+			Request.post(requestOptions).then(() => {
+				// console.log(body);
+			}).catch((body, err) => {
+				console.log(err);
 			});
 		}
-		// console.log('\n\nNós recebemos isso:');
-		// console.log(request.body);
+
 
 		socket.io.emit(socket.activity_event, {
 			internal_id: uuid(),

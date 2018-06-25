@@ -28,7 +28,6 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "socket.io": "2.0.4",
-    "twit": "^2.2.10",
     "uuid": "^3.2.1"
   },
   "repository": {
