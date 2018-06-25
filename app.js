@@ -120,12 +120,12 @@ app.post('/webhook/twitter', (request, response) => {
 									options: [
 										{
 											label: 'Sim',
-											// description: 'Você acertou o que eu disse',
+											description: 'Você acertou o que eu disse',
 											metadata: 'external_id_1',
 										},
 										{
 											label: 'Não',
-											// description: 'Você errou!',
+											description: 'Você errou!',
 											metadata: 'external_id_2',
 										},
 									],
