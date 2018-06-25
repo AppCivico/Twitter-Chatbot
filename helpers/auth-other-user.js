@@ -15,8 +15,8 @@ const auth = {};
 auth.twitter_oauth = {
 	consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
 	consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
-	token: nconf.get('TWITTER_ACCESS_TOKEN'),
-	token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET'),
+	token: nconf.get('OTHER_USER1_TOKEN'),
+	token_secret: nconf.get('OTHER_USER1_SECRET'),
 };
 auth.twitter_webhook_environment = nconf.get('TWITTER_WEBHOOK_ENV');
 

@@ -44,6 +44,8 @@ request.get(requestTokenResponseOptions).then((body) => {
 	.then((body) => {
 		const accessTokens = queryString.parse(body);
 
+		console.log('Take note of the following oauth_token:');
+		console.log(accessTokens);
 		const subscriptionRequestOptions = {
 			url: `https://api.twitter.com/1.1/account_activity/all/${args.environment}/subscriptions.json`,
 			oauth: {
