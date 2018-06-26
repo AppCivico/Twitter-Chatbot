@@ -1,20 +1,22 @@
 require('dotenv').config();
+// const TwitterStrategy = require('passport-twitter');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
-// const TwitterStrategy = require('passport-twitter');
 const uuid = require('uuid/v4');
 const security = require('./helpers/security');
 const auth = require('./helpers/auth');
-const userOauth = require('./helpers/auth-other-user');
 const cacheRoute = require('./helpers/cache-route');
 const socket = require('./helpers/socket');
-const Request = require('request-promise');
 
 const app = express();
 // let msgToIgnore;
 // const ourUsers = process.env.OUR_USERS.split(',');
+
+const mp = require('./message_processor');
+// const Request = require('request-promise');
+// const userOauth = require('./helpers/auth-other-user');
 
 app.set('port', (process.env.PORT || 5000));
 app.set('views', `${__dirname}/views`);
@@ -47,7 +49,7 @@ const parseForm = bodyParser.urlencoded({ extended: false });
  * */
 app.get('/webhook/twitter', (request, response) => {
 	const crcToken = request.query.crc_token;
-	console.log('Vamos imprimir o:', crcToken);
+	console.log('crcToken:', crcToken);
 	if (crcToken) {
 		const hash = security.get_challenge_response(crcToken, auth.twitter_oauth.consumer_secret);
 
@@ -70,79 +72,50 @@ app.post('/webhook/twitter', (request, response) => {
 	if (request.body.direct_message_indicate_typing_events) {
 		// console.log('Um usuário externo está digitando');
 	} else if (request.body.direct_message_events) {
-		const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
-		const senderId = request.body.direct_message_events[0].message_create.sender_id;
+		// const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
+		// const senderId = request.body.direct_message_events[0].message_create.sender_id;
 
 		// if: event is not happening to the same user who started it
-		// and: request.body.direct_message_events[0].id !== msgToIgnore
-		if (senderId !== request.body.for_user_id) {
-			const ourName = request.body.users[recipientId].name;
-			const theirName = request.body.users[senderId].name;
+		// request.body.direct_message_events[0].id !== msgToIgnore
+		if (request.body.direct_message_events[0].message_create.sender_id !== request.body.for_user_id) { // eslint-disable-line max-len
+			mp.checkType(request.body.direct_message_events[0].message_create, request.body.users);
 
-			// removing emojis from message text
-			// .replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|
-			// \uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, '');
-			// msgText = msgText.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
-			const msgText = request.body.direct_message_events[0].message_create.message_data.text;
-			let message = `Você me disse: ${msgText}\nAcertei?`;
-			if (request.body.direct_message_events[0].message_create.message_data.quick_reply_response) { // eslint-disable-line max-len
-				const quickButton = request.body.direct_message_events[0].message_create.message_data.quick_reply_response.metadata; // eslint-disable-line max-len
-				console.log(`O botão ${quickButton} foi pressionado`);
-				message = `Você clicou no botão "${msgText}". Acertei?`;
-			}
-
-			console.log('------------------------');
-			console.log(`${recipientId} recebeu uma mensagem de ${senderId}`);
-			console.log(`${ourName} recebeu uma mensagem de ${theirName}`);
-			console.log(`A mensagem foi: ${msgText}`);
-
-			// console.log(request.body.direct_message_events[0].message_create.message_data);
-
-			const oauth = userOauth.getAuth(recipientId);
-			// request options
-			const requestOptions = {
-				url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-				oauth: oauth.twitter_oauth,
-				headers: {
-					'Content-type': 'application/json',
-				},
-				json: {
-					event: {
-						type: 'message_create',
-						message_create: {
-							target: {
-								recipient_id: senderId,
-							},
-							message_data: {
-								text: message,
-								quick_reply: {
-									type: 'options',
-									options: [
-										{
-											label: 'Sim',
-											description: 'Você acertou o que eu disse',
-											metadata: 'external_id_1',
-										},
-										{
-											label: 'Não',
-											description: 'Você errou!',
-											metadata: 'external_id_2',
-										},
-									],
-								},
-							},
-						},
-					},
-				},
-			};
-
-				// POST request to send our DM
-			Request.post(requestOptions).then((body) => {
-				// msgToIgnore = body.event.id;
-				// console.log(body);
-			}).catch((body, err) => {
-				console.log(err);
-			});
+			// // Keeping requestOptions as an example
+			// const requestOptions = {
+			// 	url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
+			// 	oauth: oauth.twitter_oauth,
+			// 	headers: {
+			// 		'Content-type': 'application/json',
+			// 	},
+			// 	json: {
+			// 		event: {
+			// 			type: 'message_create',
+			// 			message_create: {
+			// 				target: {
+			// 					recipient_id: senderId,
+			// 				},
+			// 				message_data: {
+			// 					text: message,
+			// 					quick_reply: {
+			// 						type: 'options',
+			// 						options: [
+			// 							{
+			// 								label: 'Sim',
+			// 								description: 'Você acertou o que eu disse',
+			// 								metadata: 'external_id_1',
+			// 							},
+			// 							{
+			// 								label: 'Não',
+			// 								description: 'Você errou!',
+			// 								metadata: 'external_id_2',
+			// 							},
+			// 						],
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	},
+			// };
 		}
 
 		socket.io.emit(socket.activity_event, {
