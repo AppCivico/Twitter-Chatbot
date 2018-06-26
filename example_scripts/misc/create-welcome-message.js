@@ -12,10 +12,30 @@ let requestOptions;
 // getting every welcome_message the user has and deleting them all
 // getting the current rule and also deleting it
 // then we can create a new welcome_message and a new rule using the last created welcome_message.id
+const welcomeData = {
+	text: 'Olá, sou assistente digital do pré-candidato Jordan Victor. Queremos um Brasil melhor e precisamos de sua ajuda.',
+	quick_reply: {
+		type: 'options',
+		options: [
+			{
+				label: 'O Candidato',
+				description: 'Saiba mais sobre o Candidato',
+				metadata: 'introQuick1',
+			},
+			{
+				label: 'Dê sua opinião',
+				description: 'Responda nossa pergunta',
+				metadata: 'introQuick2',
+			},
+		],
+	},
+};
+
+
 const ourUsers = process.env.OUR_USERS.split(',');
 
 // change the position value here manually => ourUsers[0], ourUsers[1] etc
-const oauth = auth.getAuth(ourUsers[0]).twitter_oauth;
+const oauth = auth.getAuth(ourUsers[1]).twitter_oauth;
 
 async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 	await list.forEach(async (message) => {
@@ -134,22 +154,7 @@ async function createMessage() {
 		json: {
 			welcome_message: { // edit here to change welcome_message settings
 				name: 'Nova Mensagem',
-				message_data: {
-					text: 'Olá! Bem vindo ao bot assistente do Governador Jordan Scher! Que tal?',
-					quick_reply: {
-						type: 'options',
-						options: [
-							{
-								label: 'Legal',
-								metadata: 'external_id_1',
-							},
-							{
-								label: 'Muito Legal',
-								metadata: 'external_id_2',
-							},
-						],
-					},
-				},
+				message_data: welcomeData,
 			},
 		},
 	};

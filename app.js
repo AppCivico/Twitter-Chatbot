@@ -13,8 +13,8 @@ const socket = require('./helpers/socket');
 const Request = require('request-promise');
 
 const app = express();
-let msgToIgnore;
-const ourUsers = process.env.OUR_USERS.split(',');
+// let msgToIgnore;
+// const ourUsers = process.env.OUR_USERS.split(',');
 
 app.set('port', (process.env.PORT || 5000));
 app.set('views', `${__dirname}/views`);
@@ -69,16 +69,13 @@ app.post('/webhook/twitter', (request, response) => {
 	// console.log(request.body);
 	if (request.body.direct_message_indicate_typing_events) {
 		// console.log('Um usuário externo está digitando');
-		// console.log(request.body);
 	} else if (request.body.direct_message_events) {
 		const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
 		const senderId = request.body.direct_message_events[0].message_create.sender_id;
-		console.log(ourUsers.includes(recipientId));
-		console.log(ourUsers.includes(senderId));
+
 		// if: event is not happening to the same user who started it
-		// and: who's receving the message is not one of our subscribed users
-		if (senderId !== request.body.for_user_id &&
-			request.body.direct_message_events[0].id !== msgToIgnore) {
+		// and: request.body.direct_message_events[0].id !== msgToIgnore
+		if (senderId !== request.body.for_user_id) {
 			const ourName = request.body.users[recipientId].name;
 			const theirName = request.body.users[senderId].name;
 
@@ -141,13 +138,12 @@ app.post('/webhook/twitter', (request, response) => {
 
 				// POST request to send our DM
 			Request.post(requestOptions).then((body) => {
-				msgToIgnore = body.event.id;
+				// msgToIgnore = body.event.id;
 				// console.log(body);
 			}).catch((body, err) => {
 				console.log(err);
 			});
 		}
-
 
 		socket.io.emit(socket.activity_event, {
 			internal_id: uuid(),
