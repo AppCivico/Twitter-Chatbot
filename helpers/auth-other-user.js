@@ -13,8 +13,8 @@ const auth = {};
 
 function getAuth(userID) {
 // twitter info
-
-	if (userID === nconf.get('OTHER_USER1_ID')) {
+	if (userID.trim() === nconf.get('OTHER_USER1_ID').trim()) {
+		console.log('É o outro usuário');
 		auth.twitter_oauth = {
 			consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
 			consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
@@ -22,6 +22,7 @@ function getAuth(userID) {
 			token_secret: nconf.get('OTHER_USER1_SECRET'),
 		};
 	} else {
+		console.log('É o app owner');
 		auth.twitter_oauth = {
 			consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
 			consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),

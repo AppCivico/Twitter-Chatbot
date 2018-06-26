@@ -67,6 +67,7 @@ app.get('/webhook/twitter', (request, response) => {
 app.post('/webhook/twitter', (request, response) => {
 	// console.log('\n\nNós recebemos isso:');
 	// console.log(request.body);
+	console.log('sdasdas');
 	if (request.body.direct_message_indicate_typing_events) {
 		// console.log('Um usuário externo está digitando');
 		// console.log(request.body);

@@ -6,28 +6,32 @@ const auth = require('../../helpers/auth-other-user.js');
 let theList;
 let requestOptions;
 
-// This one isn't a helper cli script but rather a file you run
-// It's easier to edit the quick_reply data like this
+// This one isn't a helper cli script but rather a file you run after changing the settings
+// You can find the welcome_message settings to edit down below;
+// What we are doing here:
+// getting every welcome_message the user has and deleting them all
+// getting the current rule and also deleting it
+// then we can create a new welcome_message and a new rule using the last created welcome_message.id
 const ourUsers = process.env.OUR_USERS.split(',');
 
-const oauth = auth.getAuth(ourUsers[0]).twitter_oauth; // change the position value here manually
-
+// change the position value here manually => ourUsers[0], ourUsers[1] etc
+const oauth = auth.getAuth(ourUsers[0]).twitter_oauth;
 
 async function deleteMessages(list) { // eslint-disable-line no-unused-vars
-	await list.welcome_messages.forEach(async (message) => {
+	await list.forEach(async (message) => {
 		console.log('Deleting => ', message.id);
 		const options = {
 			url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/destroy.json',
 			oauth,
-			json: {
+			qs: {
 				id: message.id,
 			},
 		};
 
-		await request.delete(options).then((response) => {
-			console.log('Success! =>', response.statusCode);
+		await request.delete(options).then(() => {
+			console.log('Success! => ', message.id);
 		}).catch((response) => {
-			console.log("Error. Couldn't delete! => ", response.message);
+			console.log(`Error. Couldn't delete! ${message.id} => `, response.message);
 		});
 	});
 }
@@ -37,16 +41,16 @@ async function deleteRules(list) {
 	const options = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/rules/destroy.json',
 		oauth,
-		json: {
+		qs: {
 			id: list.welcome_message_rules[0].id,
 		},
 	};
 
 
-	await request.delete(options).then((response) => {
-		console.log('Success! =>', response.statusCode);
+	await request.delete(options).then(() => {
+		console.log('Success! => ', list.welcome_message_rules[0].id);
 	}).catch((response) => {
-		console.log("Error. Couldn't delete! => ", response.message);
+		console.log(`Error. Couldn't delete! ${list.welcome_message_rules[0].id} => `, response.message);
 	});
 }
 
@@ -65,7 +69,7 @@ async function createRule(id) {
 	};
 
 	request.post(options).then(() => {
-		console.log('We created a new rule!');
+		console.log('We created a new rule! This last created message is the new active message');
 	}).catch((response) => {
 		console.log("Error. Couldn't create new rule! Try again! =>", response.message);
 	});
@@ -84,12 +88,14 @@ async function createMessage() {
 	await request.get(requestOptions).then((response) => {
 	// console.log('HTTP response code:', response);
 		theList = JSON.parse(response);
-		console.log('We got the messages list =>');
-		// console.log(theList);
 		if (theList.welcome_messages) {
+			console.log('We got the messages list =>');
+			console.log(theList);
 			console.log("Let's delete it");
 			// Deleting every welcome message!
-			deleteMessages(theList);
+			deleteMessages(theList.welcome_messages);
+		} else {
+			console.log('There are no messages to delete!');
 		}
 	}).catch((response) => {
 		console.log("Couldn't get message list =>", response.message);
@@ -126,10 +132,10 @@ async function createMessage() {
 			'Content-type': 'application/json',
 		},
 		json: {
-			welcome_message: {
+			welcome_message: { // edit here to change welcome_message settings
 				name: 'Nova Mensagem',
 				message_data: {
-					text: 'Olá! Bem vindo ao bot assistente do Senador Jordan2! O que acha?',
+					text: 'Olá! Bem vindo ao bot assistente do Governador Jordan Scher! Que tal?',
 					quick_reply: {
 						type: 'options',
 						options: [
@@ -150,12 +156,8 @@ async function createMessage() {
 
 
 	request.post(requestOptions).then((response) => {
-		console.log('HTTP response code:', response.message);
 		console.log('\nWe created a new message => ', response.welcome_message.id);
 		createRule(response.welcome_message.id);
-		if (response.statusCode === 204) {
-			console.log('Subscription exists for user.');
-		}
 	}).catch((response) => {
 		console.log("Couldn't create new message => ", response.message);
 	});

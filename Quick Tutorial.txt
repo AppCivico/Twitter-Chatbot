@@ -2,6 +2,9 @@ Setting up Twitter Account Api (Premium - Free Tier)
 
 https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/guides/getting-started-with-webhooks
 
+0.
+Aplly for beta access here: https://developer.twitter.com/en/apply
+
 1.
 Create an app on https://apps.twitter.com/
 ->Change Permission to Accept "Read, Write and Access direct messages"
@@ -11,7 +14,7 @@ Create an app on https://apps.twitter.com/
 2.
 Create an environment on https://developer.twitter.com/en/account/environments
 ->Set Up dev env on "Account Activity API Sandbox" (A dialog box will show up)
-->Set up your Dev environment label(e.g. "Prod"). This will be used twice 
+->Set up your Dev environment label (e.g. "Prod"). This will be used twice 
 ->Select the app you just created
 
 3.
@@ -20,8 +23,8 @@ Setup the project
 ->npm install
 ->Duplicate config.sample.json
 ->Fill the consumer key, consumer secret, Access Token key and Access Token secret
-->Full "TWITTER_WEBHOOK_ENV" with your Dev environment label(e.g. "Prod")
-->npm start (it's goint to run on port 5000)
+->Fill "TWITTER_WEBHOOK_ENV" with your Dev environment label (e.g. "Prod")
+->npm start (it's goint to run on port 5000 by default)
 ->Run ./ngrok http 5000 -> save the URL (e.g. https://9eb889bb.ngrok.io )
 ->Change USER and PASSWORD (optional) 
 
@@ -34,8 +37,10 @@ Don't forget to save changes usings "Update Settings" below
 
 ->Run node example_scripts/webhook_management/create-webhook-config.js -e <environment> -u <url>
 Where <environment> is Dev environment label(e.g. "Prod") 
-And <url> is your ngrok url + /webhook/twitter
-Like this: node example_scripts/webhook_management/create-webhook-config.js -e Prod -u https://9eb889bb.ngrok.io/webhook/twitter
+And <url> is your ngrok url + /webhook/twitter 
+Like this: node example_scripts/webhook_management/create-webhook-config.js -e Prod -u https://02b02409.ngrok.io/webhook/twitter
+The express server needs to be running to create webhook.
+
 
 ->Add a user subscription for the user that owns the app:
 node example_scripts/subscription_management/add-subscription-app-owner.js -e <environment>
@@ -51,7 +56,18 @@ Note: More example scripts can be found in the example_scripts directory to:
 
 -----
 Change the webhooks on twitter apps settings first
-Before changing running create-webhook.config.js again, run delete-config-webhook:
+Before changing running create-webhook.config.js again, run delete-config-webhook(using yout last created url):
+
 node example_scripts/webhook_management/delete-webhook-config.js -e dev -u https://755369fd.ngrok.io/webhook/twitter
+I think it's better to delete the webhook when you're done developing for the day
+
+node example_scripts/webhook_management/create-webhook-config.js -e dev -u https://02b02409.ngrok.io/webhook/twitter
+Don't forget: The express server needs to be running to create webhook. (npm start)
+
+After changing the webhook, you will have to subscribe every user again, including the app owner
+node example_scripts/subscription_management/add-subscription-app-owner.js -e dev
+node example_scripts/subscription_management/add-subscription-other-user.js -e dev
+
 
 https://medium.com/@nragusa/getting-started-with-the-twitter-account-activity-api-beta-395e9498af81
+https://github.com/twitterdev/twitter-webhook-boilerplate-node/tree/master/messages
