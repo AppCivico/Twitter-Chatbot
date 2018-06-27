@@ -41,8 +41,9 @@ mp.checkType = (payload, users) => {
  */
 mp.send_message = (msg) => {
 	twitter.send_direct_message(msg, (error, res, body) => { // eslint-disable-line no-unused-vars
-		console.log('Sent message successfully => ', body.event.id);
-		// console.log(`body => ${body}`);
+		// console.log('Sent message successfully => ', body.event.id);
+		console.dir(body);
+		// console.log(`body => ${(body)}`);
 		// console.log(`response => ${res}`);
 		// console.log(`error => ${error}`);
 	});

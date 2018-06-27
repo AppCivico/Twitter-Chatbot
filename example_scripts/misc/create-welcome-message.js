@@ -20,12 +20,12 @@ const welcomeData = {
 			{
 				label: 'O Candidato',
 				description: 'Saiba mais sobre o Candidato',
-				metadata: 'introQuick1',
+				metadata: 'aboutPolitician',
 			},
 			{
 				label: 'Dê sua opinião',
 				description: 'Responda nossa pergunta',
-				metadata: 'introQuick2',
+				metadata: 'answerPoll',
 			},
 		],
 	},
