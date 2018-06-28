@@ -1,3 +1,5 @@
+const options = require('./options');
+
 module.exports = {
 
 	// this message is used if the bot can't find a response
@@ -20,16 +22,8 @@ module.exports = {
 					quick_reply: {
 						type: 'options',
 						options: [
-							{
-								label: 'O Candidato',
-								description: 'Saiba mais sobre o Candidato',
-								metadata: 'aboutPolitician',
-							},
-							{
-								label: 'Dê sua opinião',
-								description: 'Responda nossa pergunta',
-								metadata: 'answerPoll',
-							},
+							options.aboutPolitician,
+							options.aboutTrajectory,
 						],
 					},
 				},
@@ -41,39 +35,11 @@ module.exports = {
 	// Usage: Just keep adding the files in folder and their names here
 	messages_files: [
 		'aboutPolitician',
-		// 'feature_quick_reply_input',
-		// 'feature_quick_reply_input_response',
-		// 'feature_quick_reply_options',
-		// 'feature_quick_reply_options_response',
-		// 'feature_buttons',
-		// 'feature_location_sharing',
-		// 'feature_location_sharing_response',
+		'aboutTrajectory',
+		'answerPoll',
+		'contact',
+		'mainMenu',
+		'endPoll',
 	],
 };
 
-
-// module.exports = {
-// 	type: 'options',
-// 	options: [
-// 		{
-// 			label: 'Quick Reply: Options',
-// 			description: 'Prompt a user to select from list of predefined options.',
-// 			metadata: 'feature_quick_reply_options',
-// 		},
-// 		{
-// 			label: 'Quick Reply: Text Input',
-// 			description: 'Prompt a user with hint text and a restricted keyboard.',
-// 			metadata: 'feature_quick_reply_input',
-// 		},
-// 		{
-// 			label: 'Location Sharing',
-// 			description: 'Prompt a user to share their location with an interactive map.',
-// 			metadata: 'feature_location_sharing',
-// 		},
-// 		{
-// 			label: 'Buttons',
-// 			description: 'Prompt a user with buttons linked to URLs.',
-// 			metadata: 'feature_buttons',
-// 		},
-// 	],
-// };

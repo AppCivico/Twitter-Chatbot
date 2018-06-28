@@ -2,12 +2,10 @@ const twitter = require('./twitter');
 const messages = require('./messages/messages');
 // const Request = require('request-promise');
 
-
 const mp = {};
 
-
 // check if message came from a text or quick_reply
-mp.checkType = (payload, users) => {
+mp.checkType = async (payload, users) => {
 	const data = { // event data
 		politicianID: payload.target.recipient_id,
 		userID: payload.sender_id,
@@ -21,10 +19,17 @@ mp.checkType = (payload, users) => {
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
 		metadata = payload.message_data.quick_reply_response.metadata; // eslint-disable-line
 		console.log(`O botão ${metadata} foi pressionado`);
-		// message = `Você clicou no botão "${msgText}". Acertei?`;
+
+
+		// if (metada) {
+
+		// }
+		if (metadata.slice(0, -1) === 'pollOption') {
+			// twitter.sendOneText(data, 'Obrigado pela sua resposta.');
+			metadata = 'endPoll';
+		}
 	} else { // user sent text?
 		metadata = 'default_message';
-		// twitter.sendDM(data, `Você me disse: ${msgText}\nAcertei?`);
 	}
 
 	console.log('------------------------');

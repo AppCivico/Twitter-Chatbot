@@ -1,5 +1,5 @@
 module.exports = {
-	metadata_trigger: 'answerPoll',
+	metadata_trigger: 'mainMenu',
 	message_event: {
 		event: {
 			type: 'message_create',
@@ -8,17 +8,19 @@ module.exports = {
 					recipient_id: undefined,
 				},
 				message_data: {
-					text: 'Azul ou Vermelho?',
+					text: 'Como posso te ajudar?',
 					quick_reply: {
 						type: 'options',
 						options: [
 							{
-								label: 'Azul',
-								metadata: 'pollOption1',
+								label: 'Trajetória',
+								description: 'Veja como ele chegou até aqui',
+								metadata: 'aboutTrajectory',
 							},
 							{
-								label: 'Vermelho',
-								metadata: 'pollOption2',
+								label: 'Dê sua opinião',
+								description: 'Responda nossa pergunta',
+								metadata: 'answerPoll',
 							},
 						],
 					},

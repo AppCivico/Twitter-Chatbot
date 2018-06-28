@@ -35,7 +35,7 @@ const welcomeData = {
 const ourUsers = process.env.OUR_USERS.split(',');
 
 // change the position value here manually => ourUsers[0], ourUsers[1] etc
-const oauth = auth.getAuth(ourUsers[1]).twitter_oauth;
+const oauth = auth.getAuth(ourUsers[0]).twitter_oauth;
 
 async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 	await list.forEach(async (message) => {
