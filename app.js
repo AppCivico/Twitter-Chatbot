@@ -79,43 +79,6 @@ app.post('/webhook/twitter', (request, response) => {
 		// request.body.direct_message_events[0].id !== msgToIgnore
 		if (request.body.direct_message_events[0].message_create.sender_id !== request.body.for_user_id) { // eslint-disable-line max-len
 			mp.checkType(request.body.direct_message_events[0].message_create, request.body.users);
-
-			// // Keeping requestOptions as an example
-			// const requestOptions = {
-			// 	url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-			// 	oauth: oauth.twitter_oauth,
-			// 	headers: {
-			// 		'Content-type': 'application/json',
-			// 	},
-			// 	json: {
-			// 		event: {
-			// 			type: 'message_create',
-			// 			message_create: {
-			// 				target: {
-			// 					recipient_id: senderId,
-			// 				},
-			// 				message_data: {
-			// 					text: message,
-			// 					quick_reply: {
-			// 						type: 'options',
-			// 						options: [
-			// 							{
-			// 								label: 'Sim',
-			// 								description: 'Você acertou o que eu disse',
-			// 								metadata: 'external_id_1',
-			// 							},
-			// 							{
-			// 								label: 'Não',
-			// 								description: 'Você errou!',
-			// 								metadata: 'external_id_2',
-			// 							},
-			// 						],
-			// 					},
-			// 				},
-			// 			},
-			// 		},
-			// 	},
-			// };
 		}
 
 		socket.io.emit(socket.activity_event, {

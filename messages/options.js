@@ -24,5 +24,25 @@ module.exports = {
 		description: 'Participe de nossa campanha',
 		metadata: 'participate',
 	},
+	news: {
+		label: 'Novidades',
+		description: 'Conte-me as novidades',
+		metadata: 'news',
+	},
+	donate: {
+		label: 'Quero doar',
+		description: 'Doe utilizando a plataforma VotoLegal',
+		metadata: 'donate',
+	},
+	divulgate: {
+		label: 'Quero divulgar',
+		description: 'Mostre o seu apoio para o mundo',
+		metadata: 'divulgate',
+	},
+	goBack: {
+		label: 'Voltar',
+		description: 'Sem pressão',
+		metadata: 'goBack',
+	},
 };
 

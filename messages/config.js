@@ -11,7 +11,7 @@ module.exports = {
 					recipient_id: undefined,
 				},
 				message_data: {
-					text: 'Perdão. Não entendo texto ainda, utilize os botões para interagir comigo.',
+					text: 'Perdão. Não entendo texto ainda, clique nos botões abaixo para interagir comigo.',
 					// ctas: [
 					// 	{
 					// 		type: 'web_url',
@@ -24,6 +24,7 @@ module.exports = {
 						options: [
 							options.aboutPolitician,
 							options.aboutTrajectory,
+							options.participate,
 						],
 					},
 				},
@@ -34,12 +35,12 @@ module.exports = {
 	// all message responses
 	// Usage: Just keep adding the files in folder and their names here
 	messages_files: [
+		'endPoll',
 		'aboutPolitician',
 		'aboutTrajectory',
 		'answerPoll',
 		'contact',
 		'mainMenu',
-		'endPoll',
 	],
 };
 

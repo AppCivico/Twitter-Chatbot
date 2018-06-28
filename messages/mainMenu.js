@@ -1,3 +1,6 @@
+const options = require('./options');
+
+
 module.exports = {
 	metadata_trigger: 'mainMenu',
 	message_event: {
@@ -12,16 +15,10 @@ module.exports = {
 					quick_reply: {
 						type: 'options',
 						options: [
-							{
-								label: 'Trajetória',
-								description: 'Veja como ele chegou até aqui',
-								metadata: 'aboutTrajectory',
-							},
-							{
-								label: 'Dê sua opinião',
-								description: 'Responda nossa pergunta',
-								metadata: 'answerPoll',
-							},
+							options.aboutPolitician,
+							options.aboutTrajectory,
+							options.answerPoll,
+							options.participate,
 						],
 					},
 				},

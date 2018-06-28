@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const request = require('request-promise');
 const auth = require('../../helpers/auth-other-user.js');
+const quickReply = require('../../messages/options');
+
 
 let theList;
 let requestOptions;
@@ -13,20 +15,14 @@ let requestOptions;
 // getting the current rule and also deleting it
 // then we can create a new welcome_message and a new rule using the last created welcome_message.id
 const welcomeData = {
-	text: 'Olá, sou assistente digital do pré-candidato Jordan Victor. Queremos um Brasil melhor e precisamos de sua ajuda.',
+	text: 'Olá, sou o assistente digital do pré-candidato Jordan Victor. Queremos um Brasil melhor e precisamos de sua ajuda.',
 	quick_reply: {
 		type: 'options',
 		options: [
-			{
-				label: 'O Candidato',
-				description: 'Saiba mais sobre o Candidato',
-				metadata: 'aboutPolitician',
-			},
-			{
-				label: 'Dê sua opinião',
-				description: 'Responda nossa pergunta',
-				metadata: 'answerPoll',
-			},
+			quickReply.aboutPolitician,
+			quickReply.aboutTrajectory,
+			quickReply.participate,
+			quickReply.news,
 		],
 	},
 };

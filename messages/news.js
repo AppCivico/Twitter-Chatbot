@@ -1,7 +1,7 @@
 const options = require('./options');
 
 module.exports = {
-	metadata_trigger: 'endPoll',
+	metadata_trigger: 'aboutPolitician',
 	message_event: {
 		event: {
 			type: 'message_create',
@@ -10,7 +10,7 @@ module.exports = {
 					recipient_id: undefined,
 				},
 				message_data: {
-					text: 'E agora, como posso te ajudar?',
+					text: 'Não há nada',
 					quick_reply: {
 						type: 'options',
 						options: [
