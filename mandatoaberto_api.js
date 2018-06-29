@@ -25,13 +25,14 @@ module.exports = {
 	},
 
 	async postPollAnswer(fbId, pollQuestionOptionId, origin) {
-		const res = await request.post(`${apiUri}/api/chatbot/poll-result?fbId=${fbId}&pollQuestionOptionId=${pollQuestionOptionId}&origin=${origin}&security_token=${securityToken}`);
+		const res = await request.post(`${apiUri}/api/chatbot/poll-result?fb_id=${fbId}&poll_question_option_id=${pollQuestionOptionId}&origin=${origin}&security_token=${securityToken}`);
 		const pollAnswer = await res.json();
+		console.log('\n\n', pollAnswer);
 		return pollAnswer;
 	},
 
 	async getPollAnswer(fbId, pollId) {
-		const res = await request(`${apiUri}/api/chatbot/poll-result?fbId=${fbId}&pollId=${pollId}&security_token=${securityToken}`);
+		const res = await request(`${apiUri}/api/chatbot/poll-result?fb_id=${fbId}&pollId=${pollId}&security_token=${securityToken}`);
 		const pollAnswer = await res.json();
 		return pollAnswer;
 	},
@@ -43,14 +44,14 @@ module.exports = {
 	},
 
 	async getAnswer(politicianId, questionName) {
-		const res = await request(`${apiUri}/api/chatbot/answer?politician_id=${politicianId}&questionName=${questionName}&security_token=${securityToken}`);
+		const res = await request(`${apiUri}/api/chatbot/answer?politician_id=${politicianId}&question_name=${questionName}&security_token=${securityToken}`);
 		const question = await res.json();
 		return question;
 	},
 
 	async postIssue(politicianId, fbId, message) {
 		const messageURI = encodeURI(message);
-		const res = await request.post(`${apiUri}/api/chatbot/issue?politician_id=${politicianId}&fbId=${fbId}&message=${messageURI}&security_token=${securityToken}`);
+		const res = await request.post(`${apiUri}/api/chatbot/issue?politician_id=${politicianId}&fb_id=${fbId}&message=${messageURI}&security_token=${securityToken}`);
 		const issue = await res.json();
 		return issue;
 	},
