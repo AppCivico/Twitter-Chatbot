@@ -60,15 +60,22 @@ mp.checkType = async (payload, users) => {
 				opt.donate, opt.divulgate, opt.goBack]);
 			break;
 		case 'donate':
+			opt.donateButton.url = 'https://votolegal.com.br/?red';
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
 			await twitter.sendTextDM(data, 'Já consegui R$0 da minha meta de R$100.000,00.');
 			await twitter.sendButton(data, 'Você deseja doar agora?', [
 				opt.divulgate, opt.goBack], [opt.donateButton]);
 			break;
-		case 'divulgate':
-			await twitter.sendButton(data, 'Que legal! Seu apoio é muito importante para nós! Você quer mudar foto(avatar) do seu perfil ?', [
-				opt.donate, opt.goBack], [opt.donateButton]);
-			break;
+		case 'divulgate': { // no-case-declarations
+			const tweetID = '463440424141459456';
+			const tweetText = encodeURIComponent('Eu apoio o dito cujo #candidato');
+			opt.divulgateTweet.url = `https://twitter.com/intent/tweet?text=${tweetText}&lang=pt`;
+			// opt.divulgateTweet.url = `https://twitter.com/intent/tweet?in_reply_to=${tweetID}&lang=pt`;
+			opt.divulgateRetweet.url = `https://twitter.com/intent/retweet?tweet_id=${tweetID}&lang=pt`;
+			opt.divulgateLike.url = `https://twitter.com/intent/like?tweet_id=${tweetID}&lang=pt`;
+			await twitter.sendButton(data, 'Que legal! Seu apoio é muito importante para nós!\nComo quer colaborar?', [
+				opt.donate, opt.goBack], [opt.divulgateTweet, opt.divulgateRetweet, opt.divulgateLike]);
+			break; }
 		case 'goBack':
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', [opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]);
 			break;

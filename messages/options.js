@@ -46,15 +46,26 @@ module.exports = {
 		metadata: 'goBack',
 	},
 	// button
+	// undefined -> will be filled later with dynamic values
 	donateButton: {
 		type: 'web_url',
 		label: 'Vamos lá!',
-		url: 'https://votolegal.com.br/?red',
+		url: undefined, // https://votolegal.com.br
 	},
-	divulgateButton: {
+	divulgateTweet: {
 		type: 'web_url',
-		label: 'Atualizar foto',
-		url: 'www.google.com',
+		label: 'Tweetando',
+		url: undefined, // 'https://twitter.com/intent/tweet?in_reply_to=463440424141459456&lang=pt'
+	},
+	divulgateRetweet: {
+		type: 'web_url',
+		label: 'Retweetando',
+		url: undefined, // 'https://twitter.com/intent/retweet?tweet_id=463440424141459456&lang=pt'
+	},
+	divulgateLike: {
+		type: 'web_url',
+		label: 'Curtindo',
+		url: undefined, // 'https://twitter.com/intent/like?tweet_id=463440424141459456&lang=pt'
 	},
 };
 

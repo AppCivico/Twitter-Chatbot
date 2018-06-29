@@ -108,7 +108,6 @@ twitter.sendQuickReplyDM = async (data, message, quickReplies) => {
  * @param  buttons  buttons array
  */
 twitter.sendButton = async (data, message, quickReplies, buttons) => {
-	console.log(buttons);
 	await Request.post({
 		url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
 		oauth: auth.getAuth(data.politicianID).twitter_oauth,
