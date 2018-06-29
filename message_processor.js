@@ -1,5 +1,5 @@
 const twitter = require('./twitter');
-const opt = require('./messages/options');
+const opt = require('./options');
 
 const mp = {};
 
