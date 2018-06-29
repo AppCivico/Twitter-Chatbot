@@ -1,14 +1,17 @@
 const twitter = require('./twitter');
-const opt = require('./options');
+const opt = require('./utils/options');
+const maApi = require('./mandatoaberto_api');
+const Articles = require('./utils/articles');
 
 const mp = {};
+// facebook pageID that we use to get politician data
+const pageID = process.env.PAGE_1_ID;
 
 /**
  * Checks if event is text or quick_reply and answer appropriately
  * @param  payload  object with message data => direct_message_events[0].message_create object
  * @param  users  object with users data =>
  */
-
 mp.checkType = async (payload, users) => {
 	const data = { // event data
 		politicianID: payload.target.recipient_id,
@@ -16,26 +19,44 @@ mp.checkType = async (payload, users) => {
 	};
 	data.politicianName = users[data.politicianID].name;
 	data.userName = users[data.userID].name;
-
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
-		const { metadata } = payload.message_data.quick_reply_response;
-		console.log(`O botão ${metadata} foi pressionado`);
+		const politicianData = await maApi.getPoliticianData(pageID);
+		let articles;
+		if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
+		const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
+		const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
+		console.log(introduction);
 
-		switch (metadata) { // checks which quick_reply was activated
+
+		// checks which quick_reply was activated (metadata)
+		switch (payload.message_data.quick_reply_response.metadata) {
 		case 'contact':
-			await twitter.sendTextDM(data, 'Você pode entrar em contato com o pré-candidato pelos seguintes canais:');
-			await twitter.sendTextDM(data, '- Através do WhatsApp: (11)987654321');
-			await twitter.sendTextDM(data, '- Através do Facebook: http://www.facebook.com/paginadocandidato');
-			await twitter.sendTextDM(data, '- Através do site: http://www.sitedocandidato.com.br');
+			if (politicianData.contact.cellphone) {
+				politicianData.contact.cellphone = politicianData.contact.cellphone.replace(/(?:\+55)+/g, '');
+				politicianData.contact.cellphone = politicianData.contact.cellphone.replace(/^(\d{2})/g, '($1)');
+			}
+			await twitter.sendTextDM(data, `Você pode entrar em contato com ${articles.defined} ${politicianData.office.name}
+			${politicianData.name} pelos seguintes canais:`);
+			if (politicianData.contact.email) {	await twitter.sendTextDM(data, `- Através do e-mail: ${politicianData.contact.email}`); }
+			if (politicianData.contact.cellphone) {	await twitter.sendTextDM(data, `- Através do WhatsApp: ${politicianData.contact.cellphone}`); }
+			if (politicianData.contact.url) { await twitter.sendTextDM(data, `- Através do site: ${politicianData.contact.url}`);	}
+			// if (politicianData.contact.twitter)
+			//  { await twitter.sendTextDM(`- Através do Twitter: ${politicianData.contact.twitter}`);}
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]);
 			break;
 		case 'aboutTrajectory':
-			await twitter.sendTextDM(data, 'Nosso governador veio de origens humildes e agora é a pessoa mais rica do Brasil.');
+		// an idea: when the text is empty it means we restarted the bot and the user lost the values
+		// StatusCodeError: 400 - {"errors":[{"code":214,"message":
+		// "event.message_create.message_data: Neither text nor attachment defined on message_data"}]}
+		// we can create a catch for this error after failing to send the message
+		// (and warn the user there was an update)
+			await twitter.sendTextDM(data, trajectory.content);
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.contact, opt.answerPoll, opt.participate, opt.news]);
 			break;
 		case 'aboutPolitician':
-			await twitter.sendTextDM(data, 'Nosso governador já fez muito por São Paulo e pretende continuar lutando.');
-			await twitter.sendQuickReplyDM(data, 'O que mais deseja saber sobre o pré-candidato?', [
+			await twitter.sendTextDM(data, introduction.content);
+			// await twitter.sendTextDM(data, 'Nosso governador já fez muito por São Paulo e pretende continuar lutando.');
+			await twitter.sendQuickReplyDM(data, `O que mais deseja saber sobre ${articles.defined} pré-candidato?`, [
 				opt.aboutTrajectory, opt.contact, opt.answerPoll, opt.participate]);
 			break;
 		case 'news':
