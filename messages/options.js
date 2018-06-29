@@ -1,12 +1,13 @@
 module.exports = {
+	// quick_reply
 	aboutPolitician: {
 		label: 'Sobre o Candidato',
-		description: 'Veja como ele chegou até aqui',
+		description: 'Saiba mais sobre o Candidato',
 		metadata: 'aboutPolitician',
 	},
 	aboutTrajectory: {
 		label: 'Trajetória',
-		description: 'Veja como ele chegou até aqui',
+		description: 'Veja como o Candidato chegou até aqui',
 		metadata: 'aboutTrajectory',
 	},
 	answerPoll: {
@@ -16,7 +17,7 @@ module.exports = {
 	},
 	contact: {
 		label: 'Contato',
-		description: 'Entre em contato com ele',
+		description: 'Entre em contato com o Candidato',
 		metadata: 'contact',
 	},
 	participate: {
@@ -26,7 +27,7 @@ module.exports = {
 	},
 	news: {
 		label: 'Novidades',
-		description: 'Conte-me as novidades',
+		description: 'Veja nossas novidades',
 		metadata: 'news',
 	},
 	donate: {
@@ -43,6 +44,17 @@ module.exports = {
 		label: 'Voltar',
 		description: 'Sem pressão',
 		metadata: 'goBack',
+	},
+	// button
+	donateButton: {
+		type: 'web_url',
+		label: 'Vamos lá!',
+		url: 'https://votolegal.com.br/?red',
+	},
+	divulgateButton: {
+		type: 'web_url',
+		label: 'Atualizar foto',
+		url: 'www.google.com',
 	},
 };
 

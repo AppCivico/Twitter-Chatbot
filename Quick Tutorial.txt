@@ -40,6 +40,8 @@ Where <environment> is Dev environment label(e.g. "Prod")
 And <url> is your ngrok url + /webhook/twitter 
 Like this: node example_scripts/webhook_management/create-webhook-config.js -e Prod -u https://02b02409.ngrok.io/webhook/twitter
 The express server needs to be running to create webhook.
+Important: in this project, the create-webhook-config.js already includes the '/webhook/twitter' part so you're supposed to do:
+node example_scripts/webhook_management/create-webhook-config.js -e Prod -u https://02b02409.ngrok.io
 
 
 ->Add a user subscription for the user that owns the app:

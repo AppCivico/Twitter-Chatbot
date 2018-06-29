@@ -11,7 +11,7 @@ const requestOptions = {
 		'Content-type': 'application/x-www-form-urlencoded',
 	},
 	form: {
-		url: args.url,
+		url: `${args.url}/webhook/twitter`,
 	},
 };
 

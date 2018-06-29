@@ -8,6 +8,7 @@ const mp = {};
  * @param  payload  object with message data => direct_message_events[0].message_create object
  * @param  users  object with users data =>
  */
+
 mp.checkType = async (payload, users) => {
 	const data = { // event data
 		politicianID: payload.target.recipient_id,
@@ -17,7 +18,7 @@ mp.checkType = async (payload, users) => {
 	data.userName = users[data.userID].name;
 
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
-		const metadata = payload.message_data.quick_reply_response.metadata; // eslint-disable-line
+		const { metadata } = payload.message_data.quick_reply_response;
 		console.log(`O botão ${metadata} foi pressionado`);
 
 		switch (metadata) { // checks which quick_reply was activated
@@ -48,11 +49,9 @@ mp.checkType = async (payload, users) => {
 				{ label: 'Azul',	metadata: 'pollOption1'	},
 				{ label: 'Vermelho',	metadata: 'pollOption2'	}]);
 			break;
-		case 'pollOption1': // user chose 1st option
-			await twitter.sendTextDM(data, 'Obrigado pela sua resposta.');
-			await twitter.sendQuickReplyDM(data, 'E agora, como posso te ajudar?', [opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]);
-			break;
-		case 'pollOption2': // user chose 2st option
+		case 'pollOption1':
+			// falls through
+		case 'pollOption2':
 			await twitter.sendTextDM(data, 'Obrigado pela sua resposta.');
 			await twitter.sendQuickReplyDM(data, 'E agora, como posso te ajudar?', [opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]);
 			break;
@@ -62,12 +61,13 @@ mp.checkType = async (payload, users) => {
 			break;
 		case 'donate':
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
-			await twitter.sendQuickReplyDM(data, 'Ficamos felizes com seu apoio! Como deseja participar?', [
-				opt.donate, opt.divulgate, opt.goBack]);
+			await twitter.sendTextDM(data, 'Já consegui R$0 da minha meta de R$100.000,00.');
+			await twitter.sendButton(data, 'Você deseja doar agora?', [
+				opt.divulgate, opt.goBack], [opt.donateButton]);
 			break;
 		case 'divulgate':
-			await twitter.sendQuickReplyDM(data, 'Ficamos felizes com seu apoio! Como deseja participar?', [
-				opt.donate, opt.divulgate, opt.goBack]);
+			await twitter.sendButton(data, 'Que legal! Seu apoio é muito importante para nós! Você quer mudar foto(avatar) do seu perfil ?', [
+				opt.donate, opt.goBack], [opt.donateButton]);
 			break;
 		case 'goBack':
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', [opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]);
