@@ -37,21 +37,34 @@ mp.checkType = async (payload, users) => {
 		const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 		const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
 		const pollData = await maApi.getPollData(pageID);
+		// const dialogs = opt;
+		function checkMenu(opt2) { // eslint-disable-line
+			let dialogs = opt2;
+			if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
+			if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
+			if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
+			if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+			if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+			return dialogs;
+		}
 
 		// checks which quick_reply was activated (metadata)
 		switch (payload.message_data.quick_reply_response.metadata) {
-		case 'contact':
+		case 'contact': {
 			if (politicianData.contact.cellphone) {
 				politicianData.contact.cellphone = politicianData.contact.cellphone.replace(/(?:\+55)+/g, '');
 				politicianData.contact.cellphone = politicianData.contact.cellphone.replace(/^(\d{2})/g, '($1)');
 			}
+
 			await twitter.sendTextDM(data, `Você pode entrar em contato com ${articles.defined} ${politicianData.office.name}
 			${politicianData.name} pelos seguintes canais:`);
 			if (politicianData.contact.email) {	await twitter.sendTextDM(data, `- Através do e-mail: ${politicianData.contact.email}`); }
 			if (politicianData.contact.cellphone) {	await twitter.sendTextDM(data, `- Através do WhatsApp: ${politicianData.contact.cellphone}`); }
 			if (politicianData.contact.url) { await twitter.sendTextDM(data, `- Através do site: ${politicianData.contact.url}`);	}
-			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]);
-			break;
+			const aaa = await checkMenu([opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]);
+			console.log(typeof aaa);
+			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', aaa);
+			break; }
 		case 'aboutTrajectory':
 			await twitter.sendTextDM(data, trajectory.content);
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.contact, opt.answerPoll, opt.participate, opt.news]);
