@@ -2,8 +2,10 @@ require('dotenv').config();
 
 const request = require('request-promise');
 const auth = require('../../helpers/auth-other-user.js');
-const quickReply = require('../../messages/options');
+const quickReply = require('../../utils/options');
+const maApi = require('../../mandatoaberto_api');
 
+const pageID = process.env.PAGE_1_ID;
 
 let theList;
 let requestOptions;
@@ -14,24 +16,12 @@ let requestOptions;
 // getting every welcome_message the user has and deleting them all
 // getting the current rule and also deleting it
 // then we can create a new welcome_message and a new rule using the last created welcome_message.id
-const welcomeData = {
-	text: 'Olá, sou o assistente digital do pré-candidato Jordan Victor. Queremos um Brasil melhor e precisamos de sua ajuda.',
-	quick_reply: {
-		type: 'options',
-		options: [
-			quickReply.aboutPolitician,
-			quickReply.aboutTrajectory,
-			quickReply.participate,
-			quickReply.news,
-		],
-	},
-};
 
 
 const ourUsers = process.env.OUR_USERS.split(',');
 
 // change the position value here manually => ourUsers[0], ourUsers[1] etc
-const oauth = auth.getAuth(ourUsers[0]).twitter_oauth;
+const oauth = auth.getAuth(ourUsers[1]).twitter_oauth;
 
 async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 	await list.forEach(async (message) => {
@@ -93,7 +83,7 @@ async function createRule(id) {
 
 
 async function createMessage() {
-// Getting welcome_messages list --------------------------------------------
+	// Getting welcome_messages list --------------------------------------------
 	requestOptions = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/list.json',
 		oauth,
@@ -102,7 +92,7 @@ async function createMessage() {
 		},
 	};
 	await request.get(requestOptions).then((response) => {
-	// console.log('HTTP response code:', response);
+		// console.log('HTTP response code:', response);
 		theList = JSON.parse(response);
 		if (theList.welcome_messages) {
 			console.log('We got the messages list =>');
@@ -128,7 +118,7 @@ async function createMessage() {
 
 
 	await request.get(requestOptions).then((response) => {
-	// console.log('HTTP response code:', response);
+		// console.log('HTTP response code:', response);
 		theList = JSON.parse(response);
 		console.log('We got the rules list =>', theList);
 		if (theList.welcome_message_rules) {
@@ -140,6 +130,22 @@ async function createMessage() {
 	});
 
 
+	const politicianData = await maApi.getPoliticianData(pageID);
+	let greeting = await politicianData.greeting.replace('${user.office.name}', politicianData.office.name); // eslint-disable-line no-template-curly-in-string
+	greeting = await greeting.replace('${user.name}', politicianData.name); // eslint-disable-line no-template-curly-in-string
+
+	const welcomeData = {
+		text: greeting,
+		quick_reply: {
+			type: 'options',
+			options: [
+				quickReply.aboutPolitician,
+				quickReply.aboutTrajectory,
+				quickReply.participate,
+				quickReply.news,
+			],
+		},
+	};
 	// creating a new welcome message --------------------------------------------
 	requestOptions = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/new.json',

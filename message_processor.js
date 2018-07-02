@@ -1,11 +1,25 @@
 const twitter = require('./twitter');
 const opt = require('./utils/options');
 const maApi = require('./mandatoaberto_api');
+const VotoLegalAPI = require('./votolegal_api.js');
 const Articles = require('./utils/articles');
 
 const mp = {};
 // facebook pageID that we use to get politician data
 const pageID = process.env.PAGE_1_ID;
+
+function getMoney(str) {
+	return parseInt(str.replace(/[\D]+/g, ''), 10);
+}
+function formatReal(int) {
+	let tmp = `${int}`;
+	tmp = tmp.replace(/([0-9]{2})$/g, ',$1');
+	if (tmp.length > 6) {
+		tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2');
+	}
+	return tmp;
+}
+
 
 /**
  * Checks if event is text or quick_reply and answer appropriately
@@ -21,7 +35,9 @@ mp.checkType = async (payload, users) => {
 	data.userName = users[data.userID].name;
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
 		const politicianData = await maApi.getPoliticianData(pageID);
+
 		let articles;
+
 		if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
 		const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 		const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
@@ -89,13 +105,15 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendQuickReplyDM(data, 'Ficamos felizes com seu apoio! Como deseja participar?', [
 				opt.donate, opt.divulgate, opt.goBack]);
 			break;
-		case 'donate':
-			opt.donateButton.url = 'https://votolegal.com.br/?red';
+		case 'donate': {
+			const valueLegal = await VotoLegalAPI.getVotoLegalValues(politicianData.votolegal_integration.votolegal_username); // eslint-disable-line max-len
+			opt.donateButton.url = politicianData.votolegal_integration.votolegal_url;
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
-			await twitter.sendTextDM(data, 'Já consegui R$0 da minha meta de R$100.000,00.');
+			await twitter.sendTextDM(data, `Já consegui R$${formatReal(valueLegal.candidate.total_donated)} da ` +
+			`minha meta de R$${formatReal(getMoney(valueLegal.candidate.raising_goal))}.`);
 			await twitter.sendButton(data, 'Você deseja doar agora?', [
 				opt.divulgate, opt.goBack], [opt.donateButton]);
-			break;
+			break; }
 		case 'divulgate': { // no-case-declarations
 			const tweetID = '463440424141459456';
 			const tweetText = encodeURIComponent('Eu apoio o dito cujo #candidato');
@@ -128,29 +146,4 @@ mp.checkType = async (payload, users) => {
 };
 
 module.exports = mp;
-
-// const messages = require('./messages/messages');
-
-// /**
-//  * sends Direct Message with Twitter API
-//  * @param  msg  a valid message event to sent using POST direct_messages/events/new
-//  */
-// mp.send_message = (msg) => {
-// 	twitter.send_direct_message(msg, (error, res, body) => { // eslint-disable-line no-unused-vars
-// 		// console.log('Sent message successfully => ', body.event.id);
-// 		console.dir(body);
-// 		// console.log(`body => ${(body)}`);
-// 		// console.log(`response => ${res}`);
-// 		// console.log(`error => ${error}`);
-// 	});
-// };
-// const messageToSend = messages.get(metadata, data.userID, data.politicianID);
-// mp.send_message(messageToSend);
-
-
-// removing links from text message
-// 	const msgText = payload.message_data.text.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
-// removing emojis from message text
-// .replace(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|
-// \uD83D[\uDC00-\uDFFF]|[\u2694-\u2697]|\uD83E[\uDD10-\uDD5D])/g, '');
 
