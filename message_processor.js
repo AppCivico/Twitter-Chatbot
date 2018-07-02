@@ -1,16 +1,14 @@
-const twitter = require('./twitter');
+const twitter = require('./utils/twitter');
 const opt = require('./utils/options');
-const maApi = require('./mandatoaberto_api');
-const VotoLegalAPI = require('./votolegal_api.js');
+const maApi = require('./utils/mandatoaberto_api');
+const VotoLegalAPI = require('./utils/votolegal_api');
 const Articles = require('./utils/articles');
 
 const mp = {};
 // facebook pageID that we use to get politician data
 const pageID = process.env.PAGE_1_ID;
 
-function getMoney(str) {
-	return parseInt(str.replace(/[\D]+/g, ''), 10);
-}
+function getMoney(str) { return parseInt(str.replace(/[\D]+/g, ''), 10); }
 function formatReal(int) {
 	let tmp = `${int}`;
 	tmp = tmp.replace(/([0-9]{2})$/g, ',$1');
@@ -19,7 +17,6 @@ function formatReal(int) {
 	}
 	return tmp;
 }
-
 
 /**
  * Checks if event is text or quick_reply and answer appropriately
@@ -35,16 +32,11 @@ mp.checkType = async (payload, users) => {
 	data.userName = users[data.userID].name;
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
 		const politicianData = await maApi.getPoliticianData(pageID);
-
 		let articles;
-
 		if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
 		const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 		const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
-		// instroduction is not working
-
 		const pollData = await maApi.getPollData(pageID);
-
 
 		// checks which quick_reply was activated (metadata)
 		switch (payload.message_data.quick_reply_response.metadata) {
@@ -61,17 +53,11 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]);
 			break;
 		case 'aboutTrajectory':
-		// an idea: when the text is empty it means we restarted the bot and the user lost the values
-		// StatusCodeError: 400 - {"errors":[{"code":214,"message":
-		// "event.message_create.message_data: Neither text nor attachment defined on message_data"}]}
-		// we can create a catch for this error after failing to send the message
-		// (and warn the user there was an update)
 			await twitter.sendTextDM(data, trajectory.content);
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', [opt.contact, opt.answerPoll, opt.participate, opt.news]);
 			break;
 		case 'aboutPolitician':
 			await twitter.sendTextDM(data, introduction.content);
-			// await twitter.sendTextDM(data, 'Nosso governador já fez muito por São Paulo');
 			await twitter.sendQuickReplyDM(data, `O que mais deseja saber sobre ${articles.defined} pré-candidato?`, [
 				opt.aboutTrajectory, opt.contact, opt.answerPoll, opt.participate]);
 			break;
@@ -80,7 +66,7 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendTextDM(data, 'Tudo está bem com o mundo.');
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', [opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]);
 			break;
-		case 'answerPoll': {
+		case 'answerPoll': { // no-case-declarations
 			const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
 			if (recipientAnswer.recipient_answered >= 1) {
 				await twitter.sendTextDM(data, 'Ah, que pena! Você já respondeu essa pergunta.');
@@ -111,10 +97,9 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
 			await twitter.sendTextDM(data, `Já consegui R$${formatReal(valueLegal.candidate.total_donated)} da ` +
 			`minha meta de R$${formatReal(getMoney(valueLegal.candidate.raising_goal))}.`);
-			await twitter.sendButton(data, 'Você deseja doar agora?', [
-				opt.divulgate, opt.goBack], [opt.donateButton]);
+			await twitter.sendButton(data, 'Você deseja doar agora?', [opt.divulgate, opt.goBack], [opt.donateButton]);
 			break; }
-		case 'divulgate': { // no-case-declarations
+		case 'divulgate': {
 			const tweetID = '463440424141459456';
 			const tweetText = encodeURIComponent('Eu apoio o dito cujo #candidato');
 			opt.divulgateTweet.url = `https://twitter.com/intent/tweet?text=${tweetText}&lang=pt`;
@@ -146,4 +131,3 @@ mp.checkType = async (payload, users) => {
 };
 
 module.exports = mp;
-

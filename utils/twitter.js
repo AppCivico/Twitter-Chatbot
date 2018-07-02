@@ -1,4 +1,4 @@
-const auth = require('./helpers/auth-other-user.js');
+const auth = require('../helpers/auth-other-user.js');
 const Request = require('request-promise');
 
 const twitter = {};
@@ -30,7 +30,7 @@ twitter.sendTextDM = async (data, message) => {
 		},
 	}).then((body) => {
 		console.log(`Sent message successfully to ${data.userName} => `, body.event.id);
-	}).catch((body) => {
+	}).catch(async (body) => {
 		console.log(`Couldn't send message to ${data.userName} => `, `${body}`);
 	});
 };
