@@ -1,4 +1,4 @@
-const commandLineArgs = require('command-line-args')
+const commandLineArgs = require('command-line-args');
 
 
 /**
@@ -6,10 +6,11 @@ const commandLineArgs = require('command-line-args')
  * all example scripts
  */
 const optionDefinitions = [
-  { name: 'url', alias: 'u', type: String },
-  { name: 'environment', alias: 'e', type: String },
-  { name: 'webhookid', alias: 'i', type: String }
-]
+	{ name: 'url', alias: 'u', type: String },
+	{ name: 'environment', alias: 'e', type: String },
+	{ name: 'webhookid', alias: 'i', type: String },
+];
 
 
-module.exports = commandLineArgs(optionDefinitions)
+module.exports = commandLineArgs(optionDefinitions);
+

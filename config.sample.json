@@ -5,5 +5,8 @@
   "TWITTER_ACCESS_TOKEN_SECRET": "your-access-token-secret",
   "TWITTER_WEBHOOK_ENV": "env-beta",
   "BASIC_AUTH_USER": "admin",
-  "BASIC_AUTH_PASSWORD": "bluebird"
+  "BASIC_AUTH_PASSWORD": "bluebird",
+  "OTHER_USER1_TOKEN": "token-from-pin",
+  "OTHER_USER1_SECRET": "secret-from-pin",
+  "OTHER_USER1_ID": "regular-id-that-also-comes-from-pin"
 }
