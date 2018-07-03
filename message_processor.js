@@ -3,20 +3,12 @@ const opt = require('./utils/options');
 const maApi = require('./utils/mandatoaberto_api');
 const VotoLegalAPI = require('./utils/votolegal_api');
 const Articles = require('./utils/articles');
+const format = require('./utils/format');
 
 const mp = {};
 // facebook pageID that we use to get politician data
 const pageID = process.env.PAGE_1_ID;
 
-function getMoney(str) { return parseInt(str.replace(/[\D]+/g, ''), 10); }
-function formatReal(int) {
-	let tmp = `${int}`;
-	tmp = tmp.replace(/([0-9]{2})$/g, ',$1');
-	if (tmp.length > 6) {
-		tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, '.$1,$2');
-	}
-	return tmp;
-}
 
 /**
  * Checks if event is text or quick_reply and answer appropriately
@@ -38,10 +30,10 @@ mp.checkType = async (payload, users) => {
 	const pollData = await maApi.getPollData(pageID);
 	function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 		let dialogs = opt2;
-		if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
 		if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
 		if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
 		if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+		if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
 		if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 		dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
@@ -108,8 +100,8 @@ mp.checkType = async (payload, users) => {
 			const valueLegal = await VotoLegalAPI.getVotoLegalValues(politicianData.votolegal_integration.votolegal_username); // eslint-disable-line max-len
 			opt.donateButton.url = politicianData.votolegal_integration.votolegal_url;
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
-			await twitter.sendTextDM(data, `Já consegui R$${formatReal(valueLegal.candidate.total_donated)} da ` +
-			`minha meta de R$${formatReal(getMoney(valueLegal.candidate.raising_goal))}.`);
+			await twitter.sendTextDM(data, `Já consegui R$${(format.formatReal(valueLegal.candidate.total_donated))} da ` +
+				`minha meta de R$${format.format(valueLegal.candidate.raising_goal)}.`);
 			await twitter.sendButton(data, 'Você deseja doar agora?', await checkMenu([opt.divulgate, opt.goBack]), [opt.donateButton]);
 			break; }
 		case 'divulgate': {
