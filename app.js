@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(session({
-	secret: 'keyboard cat',
+	secret: process.env.EXPRESS_SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
 }));
@@ -76,7 +76,6 @@ app.post('/webhook/twitter', (request, response) => {
 		// const senderId = request.body.direct_message_events[0].message_create.sender_id;
 
 		// if: event is not happening to the same user who started it
-		// request.body.direct_message_events[0].id !== msgToIgnore
 		if (request.body.direct_message_events[0].message_create.sender_id !== request.body.for_user_id) { // eslint-disable-line max-len
 			mp.checkType(request.body.direct_message_events[0].message_create, request.body.users);
 		}

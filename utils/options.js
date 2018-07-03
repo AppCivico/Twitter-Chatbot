@@ -45,6 +45,16 @@ module.exports = {
 		description: 'Sem pressão',
 		metadata: 'goBack',
 	},
+	letsGo: {
+		label: 'Vamos lá!',
+		// description: undefined,
+		metadata: 'recipientData',
+	},
+	notNow: {
+		label: 'Agora não',
+		// description: undefined,
+		metadata: 'goBack',
+	},
 	// button
 	// undefined -> will be filled later with dynamic values
 	donateButton: {
@@ -68,4 +78,3 @@ module.exports = {
 		url: undefined, // 'https://twitter.com/intent/like?tweet_id=463440424141459456&lang=pt'
 	},
 };
-
