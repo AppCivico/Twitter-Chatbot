@@ -3,7 +3,7 @@ module.exports = {
 	aboutPolitician: {
 		label: 'Sobre o Candidato',
 		description: 'Saiba mais sobre o Candidato',
-		metadata: 'aboutPolitician',
+		metadata: 'aboutPolitician', // default value, should be replaced
 	},
 	aboutTrajectory: {
 		label: 'Trajetória',

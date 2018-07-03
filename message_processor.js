@@ -9,7 +9,6 @@ const mp = {};
 // facebook pageID that we use to get politician data
 const pageID = process.env.PAGE_1_ID;
 
-
 /**
  * Checks if event is text or quick_reply and answer appropriately
  * @param  payload  object with message data => direct_message_events[0].message_create object
@@ -22,12 +21,21 @@ mp.checkType = async (payload, users) => {
 	};
 	data.politicianName = users[data.politicianID].name;
 	data.userName = users[data.userID].name;
+
 	const politicianData = await maApi.getPoliticianData(pageID);
 	let articles;
 	if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
 	const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 	const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
 	const pollData = await maApi.getPollData(pageID);
+
+	if (politicianData.office.name === 'Outros' ||	politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
+		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
+	} else {
+		// unlike facebook, twitter allows for more than 20 chars at 'label'
+		opt.aboutPolitician.label = `Sobre ${articles.defined} ${politicianData.office.name}`;
+	}
+
 	function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 		let dialogs = opt2;
 		if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }

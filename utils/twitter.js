@@ -4,7 +4,7 @@ const Request = require('request-promise');
 const twitter = {};
 
 /**
- * Sends a Twitter Direct message without relying on messages.js
+ * Sends a Twitter Direct message
  * @param  data  object with userID(recipient) and politicianID(sender)
  * @param  message  the text message
  */
@@ -36,7 +36,7 @@ twitter.sendTextDM = async (data, message) => {
 };
 
 /**
- * Sends a Twitter Direct text message + quick_replies without relying on messages.js
+ * Sends a Twitter Direct text message + quick_replies
  * @param  data  object with userID(recipient) and politicianID(sender)
  * @param  message  the text message
  * @param  quickReplies  quick_reply options array
@@ -73,7 +73,7 @@ twitter.sendQuickReplyDM = async (data, message, quickReplies) => {
 };
 
 /**
- * Sends a Twitter Direct text message + quick_reply + button without relying on messages.js
+ * Sends a Twitter Direct text message + quick_reply + button
  * @param  data  object with userID(recipient) and politicianID(sender)
  * @param  message  the text message
  * @param  quickReplies  quick_reply options array
