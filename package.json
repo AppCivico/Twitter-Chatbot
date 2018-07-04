@@ -1,13 +1,13 @@
 {
-  "name": "twitter-webhook-boilerplate-node",
+  "name": "twitter-chatbot",
   "version": "1.0.0",
-  "description": "Sample web app and helper scripts to get started with Twitter's Account Activity API",
+  "description": "a chatbot for twitter",
   "engines": {
     "node": "5.9.1"
   },
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "body-parser": "^1.16.1",
