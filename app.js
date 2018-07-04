@@ -138,4 +138,3 @@ app.get(
 	'/callbacks/:action', passport.authenticate('twitter', { failureRedirect: '/' }),
 	require('./routes/sub-callbacks'),
 );
-

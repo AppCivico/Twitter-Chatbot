@@ -52,7 +52,8 @@ There! Now everything that happens to the app owner will be connected to the web
 
 ->To add a user subscription for another user using PIN-based Twitter sign-in.
     node example_scripts/subscription_management/add-subscription-other-user.js -e <environment>
-Note: More example scripts can be found in the example_scripts directory to:
+    This will print out both access_token and access_token secret that we need for the oauth
+Obs: More scripts can be found in the example_scripts directory to:
     Create, delete, retrieve and validate webhook configs.
     Add, remove, retrieve, count and list user subscriptions.
 
@@ -62,12 +63,12 @@ Before changing running create-webhook.config.js again, run delete-config-webhoo
 
 node example_scripts/webhook_management/delete-webhook-config.js -e dev
 
-node example_scripts/webhook_management/create-webhook-config.js -e dev -u https://02b02409.ngrok.io/webhook/twitter
+node example_scripts/webhook_management/create-webhook-config.js -e dev -u https://02b02409.ngrok.io/
 Don't forget: The express server needs to be running to create webhook. (npm start)
 
 After changing the webhook, you will have to subscribe every user again, including the app owner(if you want too)
 node example_scripts/subscription_management/add-subscription-app-owner.js -e dev
-node example_scripts/subscription_management/add-subscription-other-user.js -e dev
+node example_scripts/subscription_management/add-subscription-other-user.js -e dev (don't forget to save access tokenn + secret)
 
 
 https://medium.com/@nragusa/getting-started-with-the-twitter-account-activity-api-beta-395e9498af81

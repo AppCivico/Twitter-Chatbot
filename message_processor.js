@@ -40,11 +40,12 @@ mp.checkType = async (payload, users) => {
 		let dialogs = opt2;
 		if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
 		if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
-		if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+		// if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
 		if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
 		if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 		dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
+		dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
 		return dialogs;
 	}
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
@@ -108,8 +109,8 @@ mp.checkType = async (payload, users) => {
 			const valueLegal = await VotoLegalAPI.getVotoLegalValues(politicianData.votolegal_integration.votolegal_username); // eslint-disable-line max-len
 			opt.donateButton.url = politicianData.votolegal_integration.votolegal_url;
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
-			await twitter.sendTextDM(data, `Já consegui R$${(format.formatReal(valueLegal.candidate.total_donated))} da ` +
-				`minha meta de R$${format.format(valueLegal.candidate.raising_goal)}.`);
+			await twitter.sendTextDM(data, `Já consegui R$${(format.formatReal(valueLegal.candidate.total_donated))} da `
+				+ `minha meta de R$${format.format(valueLegal.candidate.raising_goal)}.`);
 			await twitter.sendButton(data, 'Você deseja doar agora?', await checkMenu([opt.divulgate, opt.goBack]), [opt.donateButton]);
 			break; }
 		case 'divulgate': {
@@ -127,8 +128,8 @@ mp.checkType = async (payload, users) => {
 				opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
 		default:
-			await twitter.sendQuickReplyDM(data, 'Perdão. Parece que ocorreu um erro. Clique em um dos botões ou me mande uma mensagem.\n' +
-				'Se o problema persistir, apague a conversa e me mande uma nova mensagem.', await checkMenu([
+			await twitter.sendQuickReplyDM(data, 'Perdão. Parece que ocorreu um erro. Clique em um dos botões ou me mande uma mensagem.\n'
+				+ 'Se o problema persistir, apague a conversa e me mande uma nova mensagem.', await checkMenu([
 				opt.aboutPolitician, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
 		}
