@@ -5,8 +5,8 @@ const securityToken = process.env.SECURITY_TOKEN;
 const apiUri = process.env.MANDATOABERTO_API_URL;
 
 module.exports = {
-	async getPoliticianData(pageId) {
-		const res = await request(`${apiUri}/api/chatbot/politician?fb_page_id=${pageId}&security_token=${securityToken}`);
+	async getPoliticianData(platform, twitterID) {
+		const res = await request(`${apiUri}/api/chatbot/politician?platform=${platform}&twitter_id=${twitterID}&security_token=${securityToken}`);
 		const politicianData = await res.json();
 		return politicianData;
 	},
@@ -27,7 +27,6 @@ module.exports = {
 	async postPollAnswer(fbId, pollQuestionOptionId, origin) {
 		const res = await request.post(`${apiUri}/api/chatbot/poll-result?fb_id=${fbId}&poll_question_option_id=${pollQuestionOptionId}&origin=${origin}&security_token=${securityToken}`);
 		const pollAnswer = await res.json();
-		console.log('\n\n', pollAnswer);
 		return pollAnswer;
 	},
 

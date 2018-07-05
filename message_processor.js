@@ -21,8 +21,7 @@ mp.checkType = async (payload, users) => {
 	};
 	data.politicianName = users[data.politicianID].name;
 	data.userName = users[data.userID].name;
-
-	const politicianData = await maApi.getPoliticianData(pageID);
+	const politicianData = await maApi.getPoliticianData('twitter', data.politicianID);
 	let articles;
 	if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
 	const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
