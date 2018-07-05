@@ -8,8 +8,16 @@ module.exports = {
 	async getPoliticianData(platform, twitterID) {
 		const res = await request(`${apiUri}/api/chatbot/politician?platform=${platform}&twitter_id=${twitterID}&security_token=${securityToken}`);
 		const politicianData = await res.json();
+		console.log(politicianData);
 		return politicianData;
 	},
+
+	async getPoliticianDataFromPageID(pageId) {
+		const res = await request(`${apiUri}/api/chatbot/politician?fb_page_id=${pageId}&security_token=${securityToken}`);
+		const politicianData = await res.json();
+		return politicianData;
+	},
+
 
 	async getPollData(pageId) {
 		const res = await request(`${apiUri}/api/chatbot/poll?fb_page_id=${pageId}&security_token=${securityToken}`);

@@ -6,8 +6,6 @@ const Articles = require('./utils/articles');
 const format = require('./utils/format');
 
 const mp = {};
-// facebook pageID that we use to get politician data
-// const pageID = process.env.PAGE_1_ID;
 
 /**
  * Checks if event is text or quick_reply and answer appropriately

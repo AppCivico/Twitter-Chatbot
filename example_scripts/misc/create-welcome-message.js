@@ -1,16 +1,33 @@
 require('dotenv').config();
-
 const request = require('request-promise');
+const commandLineArgs = require('command-line-args');
 const auth = require('../../helpers/auth-other-user.js');
 const quickReply = require('../../utils/options');
 const maApi = require('../../utils/mandatoaberto_api');
 const Articles = require('../../utils/articles');
 const opt = require('../../utils/options');
 
-const pageID = process.env.PAGE_1_ID;
 
 let theList;
 let requestOptions;
+
+
+/**
+ * Sets up command line arguments for
+ * all example scripts
+ */
+const optionDefinitions = [
+	{ name: 'pageID', alias: 'p', type: String },
+];
+
+const args = commandLineArgs(optionDefinitions);
+// const pageID = process.env.PAGE_1_ID;
+const { pageID } = args;
+
+if (!pageID) {
+	console.log('You\'re missing the pageID argument. Use -p <pageID>');
+	process.exit(-1);
+}
 
 // This one isn't a helper cli script but rather a file you run after changing the settings
 // You can find the welcome_message settings to edit down below;
@@ -23,7 +40,6 @@ let requestOptions;
 const ourUsers = process.env.OUR_USERS.split(',');
 
 // change the position value here manually => ourUsers[0], ourUsers[1] etc
-const oauth = auth.getAuth(ourUsers[1]).twitter_oauth;
 
 let politicianData;
 let trajectory;
@@ -43,7 +59,7 @@ function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 }
 
 async function loadData() {
-	politicianData = await maApi.getPoliticianData(pageID);
+	politicianData = await maApi.getPoliticianDataFromPageID(pageID);
 	let articles;
 	if (politicianData.gender === 'F') { articles = Articles.feminine; } else { articles = Articles.masculine; }
 	trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
