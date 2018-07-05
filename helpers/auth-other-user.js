@@ -11,25 +11,15 @@ nconf.file({ file: 'config.json' }).env();
 
 const auth = {};
 
-function getAuth(userID) {
-// twitter info
-	if (userID.trim() === nconf.get('OTHER_USER1_ID').trim()) {
-		console.log('É o outro usuário');
-		auth.twitter_oauth = {
-			consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
-			consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
-			token: nconf.get('OTHER_USER1_TOKEN'),
-			token_secret: nconf.get('OTHER_USER1_SECRET'),
-		};
-	} else {
-		console.log('É o app owner');
-		auth.twitter_oauth = {
-			consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
-			consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
-			token: nconf.get('TWITTER_ACCESS_TOKEN'),
-			token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET'),
-		};
-	}
+function getAuth(data) { // userID means politicianID
+	auth.twitter_oauth = {
+		consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
+		consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
+		token: data.oauthToken,
+		token_secret: data.tokenSecret,
+		// 		token: nconf.get('OTHER_USER1_TOKEN'),
+		// 		token_secret: nconf.get('OTHER_USER1_SECRET'),
+	};
 	auth.twitter_webhook_environment = nconf.get('TWITTER_WEBHOOK_ENV');
 
 	// basic auth middleware for express
@@ -41,7 +31,6 @@ function getAuth(userID) {
 
 	// csrf protection middleware for express
 	// auth.csrf = require('csurf')();
-
 
 	// Configure the Twitter strategy for use by Passport.
 	passport.use(new TwitterStrategy(

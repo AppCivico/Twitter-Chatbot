@@ -1,5 +1,5 @@
-const auth = require('../helpers/auth-other-user.js');
 const Request = require('request-promise');
+const auth = require('../helpers/auth-other-user.js');
 
 const twitter = {};
 
@@ -11,7 +11,7 @@ const twitter = {};
 twitter.sendTextDM = async (data, message) => {
 	await Request.post({
 		url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-		oauth: auth.getAuth(data.politicianID).twitter_oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
@@ -44,7 +44,7 @@ twitter.sendTextDM = async (data, message) => {
 twitter.sendQuickReplyDM = async (data, message, quickReplies) => {
 	await Request.post({
 		url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-		oauth: auth.getAuth(data.politicianID).twitter_oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
@@ -82,7 +82,7 @@ twitter.sendQuickReplyDM = async (data, message, quickReplies) => {
 twitter.sendButton = async (data, message, quickReplies, buttons) => {
 	await Request.post({
 		url: 'https://api.twitter.com/1.1/direct_messages/events/new.json',
-		oauth: auth.getAuth(data.politicianID).twitter_oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
