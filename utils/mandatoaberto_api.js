@@ -11,6 +11,13 @@ module.exports = {
 		return politicianData;
 	},
 
+	async getPoliticianDataFromPageID(pageId) {
+		const res = await request(`${apiUri}/api/chatbot/politician?fb_page_id=${pageId}&security_token=${securityToken}`);
+		const politicianData = await res.json();
+		return politicianData;
+	},
+
+
 	async getPollData(pageId) {
 		const res = await request(`${apiUri}/api/chatbot/poll?fb_page_id=${pageId}&security_token=${securityToken}`);
 		const pollData = await res.json();

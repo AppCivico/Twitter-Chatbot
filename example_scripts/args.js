@@ -13,4 +13,3 @@ const optionDefinitions = [
 
 
 module.exports = commandLineArgs(optionDefinitions);
-
