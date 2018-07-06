@@ -68,7 +68,7 @@ Don't forget: The express server needs to be running to create webhook. (npm sta
 
 After changing the webhook, you will have to subscribe every user again, including the app owner(if you want too)
 node example_scripts/subscription_management/add-subscription-app-owner.js -e dev
-node example_scripts/subscription_management/add-subscription-other-user.js -e dev (don't forget to save access tokenn + secret)
+node example_scripts/subscription_management/add-subscription-other-user.js -e dev (don't forget to save access token + secret)
 
 
 https://medium.com/@nragusa/getting-started-with-the-twitter-account-activity-api-beta-395e9498af81

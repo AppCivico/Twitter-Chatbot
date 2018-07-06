@@ -8,7 +8,6 @@ module.exports = {
 	async getPoliticianData(platform, twitterID) {
 		const res = await request(`${apiUri}/api/chatbot/politician?platform=${platform}&twitter_id=${twitterID}&security_token=${securityToken}`);
 		const politicianData = await res.json();
-		console.log(politicianData);
 		return politicianData;
 	},
 

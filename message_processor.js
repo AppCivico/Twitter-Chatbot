@@ -25,12 +25,12 @@ mp.checkType = async (payload, users) => {
 	data.tokenSecret = politicianData.twitter_token_secret;
 
 	let articles;
-	if (politicianData.gender === 'F') { articles = Articles.feminine; } else {	articles = Articles.masculine; }
+	if (politicianData.gender === 'F') { articles = Articles.feminine; } else { articles = Articles.masculine; }
 	const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 	const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
 	// const pollData = await maApi.getPollData(pageID);
 
-	if (politicianData.office.name === 'Outros' ||	politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
+	if (politicianData.office.name === 'Outros' || politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
 		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
 	} else {
 		// unlike facebook, twitter allows for more than 20 chars at 'label'
@@ -59,11 +59,12 @@ mp.checkType = async (payload, users) => {
 			}
 			await twitter.sendTextDM(data, `Você pode entrar em contato com ${articles.defined} ${politicianData.office.name}
 			${politicianData.name} pelos seguintes canais:`);
-			if (politicianData.contact.email) {	await twitter.sendTextDM(data, `- Através do e-mail: ${politicianData.contact.email}`); }
-			if (politicianData.contact.cellphone) {	await twitter.sendTextDM(data, `- Através do WhatsApp: ${politicianData.contact.cellphone}`); }
-			if (politicianData.contact.url) { await twitter.sendTextDM(data, `- Através do site: ${politicianData.contact.url}`);	}
+			if (politicianData.contact.email) { await twitter.sendTextDM(data, `- Através do e-mail: ${politicianData.contact.email}`); }
+			if (politicianData.contact.cellphone) { await twitter.sendTextDM(data, `- Através do WhatsApp: ${politicianData.contact.cellphone}`); }
+			if (politicianData.contact.url) { await twitter.sendTextDM(data, `- Através do site: ${politicianData.contact.url}`); }
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]));
-			break; }
+			break;
+		}
 		case 'aboutTrajectory':
 			await twitter.sendTextDM(data, trajectory.content);
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.contact, opt.answerPoll, opt.participate, opt.news]));
@@ -78,31 +79,32 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendTextDM(data, 'Tudo está bem com o mundo.');
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
-		// case 'answerPoll': { // no-case-declarations
-		// 	const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
-		// 	if (recipientAnswer.recipient_answered >= 1) {
-		// 		await twitter.sendTextDM(data, 'Ah, que pena! Você já respondeu essa pergunta.');
-		// 		await twitter.sendQuickReplyDM(data, 'Se quiser, eu posso te ajudar com outra coisa.',
-		// 			await checkMenu([
-		// 				opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]));
-		// 	} else {
-		// 		await twitter.sendTextDM(data, 'Quero conhecer você melhor. Deixe sua resposta ' +
-		// 'e participe deste debate.');
-		// 		await twitter.sendQuickReplyDM(data, `Pergunta: ${pollData.questions[0].content}`, [
-		// 			{ label: pollData.questions[0].options[0].content,	metadata: 'pollOption0'	},
-		// 			{ label: pollData.questions[0].options[1].content,	metadata: 'pollOption1'	}]);
-		// 	}
-		// 	break;	}
+			// case 'answerPoll': { // no-case-declarations
+			// 	const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
+			// 	if (recipientAnswer.recipient_answered >= 1) {
+			// 		await twitter.sendTextDM(data, 'Ah, que pena! Você já respondeu essa pergunta.');
+			// 		await twitter.sendQuickReplyDM(data, 'Se quiser, eu posso te ajudar com outra coisa.',
+			// 			await checkMenu([
+			// 				opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]));
+			// 	} else {
+			// 		await twitter.sendTextDM(data, 'Quero conhecer você melhor. Deixe sua resposta ' +
+			// 'e participe deste debate.');
+			// 		await twitter.sendQuickReplyDM(data, `Pergunta: ${pollData.questions[0].content}`, [
+			// 			{ label: pollData.questions[0].options[0].content,	metadata: 'pollOption0'	},
+			// 			{ label: pollData.questions[0].options[1].content,	metadata: 'pollOption1'	}]);
+			// 	}
+			// 	break;	}
 		case 'pollOption0':
 			// falls through
-		case 'pollOption1':	{
+		case 'pollOption1': {
 			// is pollAnswer the same as pollData.questions[0].options[N].id?
 			const pollAnswer = payload.message_data.quick_reply_response.metadata.slice(-1);
 			await maApi.postPollAnswer(data.userID, pollAnswer, 'twitter'); // could not find recipient with that fb_id
 			await twitter.sendTextDM(data, 'Obrigado pela sua resposta.');
 			await twitter.sendQuickReplyDM(data, 'E agora, como posso te ajudar?', await checkMenu([
 				opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]));
-			break; }
+			break;
+		}
 		case 'participate':
 			await twitter.sendQuickReplyDM(data, 'Ficamos felizes com seu apoio! Como deseja participar?', await checkMenu([
 				opt.donate, opt.divulgate, opt.goBack]));
@@ -112,9 +114,10 @@ mp.checkType = async (payload, users) => {
 			opt.donateButton.url = politicianData.votolegal_integration.votolegal_url;
 			await twitter.sendTextDM(data, 'Seu apoio é fundamental para nossa pré-campanha! Por isso, cuidamos da segurança de todos os doadores. Saiba mais em: www.votolegal.com.br');
 			await twitter.sendTextDM(data, `Já consegui R$${(format.formatReal(valueLegal.candidate.total_donated))} da `
-				+ `minha meta de R$${format.format(valueLegal.candidate.raising_goal)}.`);
+					+ `minha meta de R$${format.format(valueLegal.candidate.raising_goal)}.`);
 			await twitter.sendButton(data, 'Você deseja doar agora?', await checkMenu([opt.divulgate, opt.goBack]), [opt.donateButton]);
-			break; }
+			break;
+		}
 		case 'divulgate': {
 			const tweetID = '463440424141459456';
 			const tweetText = encodeURIComponent('Eu apoio o dito cujo #candidato');
@@ -124,14 +127,15 @@ mp.checkType = async (payload, users) => {
 			opt.divulgateLike.url = `https://twitter.com/intent/like?tweet_id=${tweetID}&lang=pt`;
 			await twitter.sendButton(data, 'Que legal! Seu apoio é muito importante para nós!\nComo quer colaborar?', await checkMenu([
 				opt.donate, opt.goBack]), [opt.divulgateTweet, opt.divulgateRetweet, opt.divulgateLike]);
-			break; }
+			break;
+		}
 		case 'goBack':
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([
 				opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
 		default:
 			await twitter.sendQuickReplyDM(data, 'Perdão. Parece que ocorreu um erro. Clique em um dos botões ou me mande uma mensagem.\n'
-				+ 'Se o problema persistir, apague a conversa e me mande uma nova mensagem.', await checkMenu([
+					+ 'Se o problema persistir, apague a conversa e me mande uma nova mensagem.', await checkMenu([
 				opt.aboutPolitician, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
 		}

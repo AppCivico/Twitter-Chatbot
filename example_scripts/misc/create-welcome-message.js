@@ -17,54 +17,53 @@ let requestOptions;
  * all example scripts
  */
 const optionDefinitions = [
-	{ name: 'pageID', alias: 'p', type: String },
+	{ name: 'twitterUserID', alias: 't', type: String },
 ];
 
 const args = commandLineArgs(optionDefinitions);
-// const pageID = process.env.PAGE_1_ID;
-const { pageID } = args;
+const { twitterUserID } = args;
 
-if (!pageID) {
-	console.log('You\'re missing the pageID argument. Use -p <pageID>');
+if (!twitterUserID) {
+	console.log('You\'re missing the twitter UserID argument. Use -t <userID>'
+		+ '\nYou can use http://gettwitterid.com/ to find out the id.');
 	process.exit(-1);
 }
 
-// This one isn't a helper cli script but rather a file you run after changing the settings
+// This a helper cli script, pass the -t twitterUserID argument to change the welcome-message
 // You can find the welcome_message settings to edit down below;
 // What we are doing here:
 // getting every welcome_message the user has and deleting them all
 // getting the current rule and also deleting it
 // then we can create a new welcome_message and a new rule using the last created welcome_message.id
 
-
-const ourUsers = process.env.OUR_USERS.split(',');
-
-// change the position value here manually => ourUsers[0], ourUsers[1] etc
-
 let politicianData;
 let trajectory;
 let introduction;
-let pollData;
+// let pollData;
 let greeting;
+const data = {};
 function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 	let dialogs = opt2;
 	if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
 	if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
-	if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+	// if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
 	if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
 	if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 	dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 	dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
+	dialogs.filter(obj => obj.metadata !== 'answerPoll');
 	return dialogs;
 }
 
 async function loadData() {
-	politicianData = await maApi.getPoliticianDataFromPageID(pageID);
+	politicianData = await maApi.getPoliticianData('twitter', twitterUserID);
+	data.oauthToken = politicianData.twitter_oauth_token;
+	data.tokenSecret = politicianData.twitter_token_secret;
 	let articles;
 	if (politicianData.gender === 'F') { articles = Articles.feminine; } else { articles = Articles.masculine; }
 	trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 	introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
-	pollData = await maApi.getPollData(pageID);
+	// pollData = await maApi.getPollData(pageID);
 
 	if (politicianData.office.name === 'Outros' || politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
 		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
@@ -82,7 +81,7 @@ async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 		console.log('Deleting => ', message.id);
 		const options = {
 			url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/destroy.json',
-			oauth,
+			oauth: auth.getAuth(data).twitter_oauth,
 			qs: {
 				id: message.id,
 			},
@@ -100,7 +99,7 @@ async function deleteRules(list) {
 	console.log('Deleting => ', list.welcome_message_rules[0].id);
 	const options = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/rules/destroy.json',
-		oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		qs: {
 			id: list.welcome_message_rules[0].id,
 		},
@@ -117,7 +116,7 @@ async function deleteRules(list) {
 async function createRule(id) {
 	const options = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/rules/new.json',
-		oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
@@ -141,7 +140,7 @@ async function createMessage() {
 	// Getting welcome_messages list --------------------------------------------
 	requestOptions = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/list.json',
-		oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
@@ -165,7 +164,7 @@ async function createMessage() {
 	// Getting rules list --------------------------------------------
 	requestOptions = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/rules/list.json',
-		oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
@@ -206,7 +205,7 @@ async function createMessage() {
 	// creating a new welcome message --------------------------------------------
 	requestOptions = {
 		url: 'https://api.twitter.com/1.1/direct_messages/welcome_messages/new.json',
-		oauth,
+		oauth: auth.getAuth(data).twitter_oauth,
 		headers: {
 			'Content-type': 'application/json',
 		},
