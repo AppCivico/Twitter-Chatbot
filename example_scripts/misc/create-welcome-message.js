@@ -76,42 +76,6 @@ async function loadData() {
 	greeting = await greeting.replace('${user.name}', politicianData.name); // eslint-disable-line no-template-curly-in-string
 }
 
-let politicianData;
-let trajectory;
-let introduction;
-let pollData;
-let greeting;
-function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
-	let dialogs = opt2;
-	if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
-	if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
-	if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
-	if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
-	if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
-	dialogs = dialogs.filter(obj => obj.metadata !== 'news');
-	dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
-	return dialogs;
-}
-
-async function loadData() {
-	politicianData = await maApi.getPoliticianData(pageID);
-	let articles;
-	if (politicianData.gender === 'F') { articles = Articles.feminine; } else { articles = Articles.masculine; }
-	trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
-	introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
-	pollData = await maApi.getPollData(pageID);
-
-	if (politicianData.office.name === 'Outros' || politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
-		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
-	} else {
-		// unlike facebook, twitter allows for more than 20 chars at 'label'
-		opt.aboutPolitician.label = `Sobre ${articles.defined} ${politicianData.office.name}`;
-	}
-
-	greeting = await politicianData.greeting.replace('${user.office.name}', politicianData.office.name); // eslint-disable-line no-template-curly-in-string
-	greeting = await greeting.replace('${user.name}', politicianData.name); // eslint-disable-line no-template-curly-in-string
-}
-
 async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 	await list.forEach(async (message) => {
 		console.log('Deleting => ', message.id);
