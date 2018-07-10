@@ -13,6 +13,7 @@ ENV NPM_CONFIG_LOGLEVEL warn
 EXPOSE 5000
 
 USER root
+RUN npm install
 RUN useradd -ms /bin/bash app
 
 RUN apt-get update

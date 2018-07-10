@@ -43,12 +43,15 @@ mp.checkType = async (payload, users) => {
 		if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
 		// if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
 		if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
-		if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
+		// if (!politicianData.votolegal_integration.votolegal_username)
+		// { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
+		if (!politicianData.votolegal_integration) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 		dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
-		dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
+		dialogs.filter(obj => obj.metadata !== 'answerPoll');
 		return dialogs;
 	}
+
 	if (payload.message_data.quick_reply_response) { // user sent quick_reply?
 		// checks which quick_reply was activated (metadata)
 		switch (payload.message_data.quick_reply_response.metadata) {
