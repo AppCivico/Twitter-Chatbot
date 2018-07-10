@@ -48,7 +48,9 @@ function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 	if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
 	// if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
 	if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
-	if (!politicianData.votolegal_integration.votolegal_username) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
+	// if (!politicianData.votolegal_integration.votolegal_username)
+	// { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
+	if (!politicianData.votolegal_integration) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 	dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 	dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
 	dialogs.filter(obj => obj.metadata !== 'answerPoll');
