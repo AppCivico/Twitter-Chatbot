@@ -25,7 +25,7 @@ WORKDIR /src
 
 USER app
 RUN npm install
-RUN npm install dotenv
+RUN npm install -g dotenv
 
 USER root
 COPY services/ /etc/service/
