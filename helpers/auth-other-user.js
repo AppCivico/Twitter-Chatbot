@@ -5,7 +5,8 @@ const passport = require('passport');
 const TwitterStrategy = require('passport-twitter');
 const httpAuth = require('http-auth');
 
-// this is used only for autheticating the app owner
+// this is used only for autheticating all subscribed users.
+// Both oauthToken and tokenSecret must be vinculated to a twitter_id in the database before.
 // load config
 nconf.file({ file: 'config.json' }).env();
 
