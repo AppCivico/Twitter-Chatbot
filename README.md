@@ -1,132 +1,147 @@
-# account-activity-dashboard
+# Mandato Aberto no Twitter
 
-Sample web app and helper scripts to get started with Twitter's premium Account Activity API (All Activities). Written in Node.js. Full documentation for this API can be found on developer.twitter.com [here](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview).
+Chatbot para Twitter utilizando o [account-activity-dashboard](https://github.com/twitterdev/account-activity-dashboard) de exemplo do Twitter.
+Feito para replicar o mesmo chatbot do [Mandato Aberto](https://github.com/AppCivico/MandatoAberto-chatbot) disponível no Messenger.
+Assim como o chatbot para Messenger, os dados de cada usuário inscrito no app são provenientes da [API do Mandato Aberto](https://github.com/AppCivico/MandatoAberto-api) utilizando seu respectivo Twitter ID como identificador.
 
-## Dependencies
+## Dependencias
 
-* A Twitter app created on [apps.twitter.com](https://apps.twitter.com/), whitelisted for access to the Account Activity API
+* Um ambiente de teste para a [Account Activity API](https://developer.twitter.com/en/apply)
+* Um app do Twitter criado em [apps.twitter.com](https://apps.twitter.com/), com acesso a Account Activity API
 * [Node.js](https://nodejs.org)
-* [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) or other webhost (optional)
-* [ngrok](https://ngrok.com/) or other tunneling service (optional)
+* [ngrok](https://ngrok.com/) ou outro serviço de tunelamento (optional)
 
-## Create and configure a Twitter app
+## Crie e configure um Twitter app 
 
-1. Create a Twitter app on [apps.twitter.com](https://apps.twitter.com/)
+1. Crie um Twitter app [apps.twitter.com](https://apps.twitter.com/)
 
-2. On the **Permissions** tab > **Access** section > enable **Read, Write and Access direct messages**.
+2. Vá em **Permissions** > **Access** > assinale **Read, Write and Access direct messages**.
 
-3. On the **Keys and Access Tokens** tab > **Your Access Token** section > click **Create my access token** button.
+3. Vá em **Keys and Access Tokens** > **Your Access Token** > clique em **Create my access token**.
 
-4. On the **Keys and Access Tokens** tab, take note of the `consumer key`, `consumer secret`, `access token` and `access token secret`.
+4. Vá em **Keys and Access Tokens**, guarde os `consumer key`, `consumer secret`, `access token` e `access token secret` gerados.
 
-## Setup & run the Node.js web app
+## Crie e configure um acesso beta a Account Activity API 
 
-1. Clone this repository:
+1. Entre em [https://developer.twitter.com/en/apply](https://developer.twitter.com/en/apply))
 
-    ```bash
-    git clone https://github.com/twitterdev/account-activity-dashboard.git
-    ```
+2. Confirme seu telefone (se necessário).
 
-2. Install Node.js dependencies:
+3. Responda os questionários. Pode escolher "Personal Use". Escreva um texto em inglês explicando porque você quer esse acesso.
 
-    ```bash
-    npm install
-    ```
+4. Confirme seu e-mail e aguarde alguns dias pela resposta do Twitter.
 
-3. Create a new `config.json` file based on `config.sample.json` and fill in your Twitter keys, tokens and webhook environment name. Twitter keys and access tokens are found on your app page on [apps.twitter.com](https://apps.twitter.com/). The basic auth properties can be anything you want, and are used for simple password protection to access the configuration UI.
+5. Crie um ambiente/environment para seu webhook em: [https://developer.twitter.com/en/account/environments](https://developer.twitter.com/en/account/environments)
 
-4. Run locally:
+6. Configure um ambiente em "Account Activity API Sandbox" (Uma caixa de diálogo aparecerá).
 
-    ```bash
-    npm start
-    ```
+7. Configure o rótulo do ambiente (exemplo: "Teste").
 
-5. Deploy app or setup a tunnel to localhost. To deploy to Heroku see "Deploy to Heroku" instructions below. To setup a tunnel use something like [ngrok](https://ngrok.com/).
+8. Selecione o App que você criou.
 
-    Take note of your webhook URL. For example:
+## Configure e execute essa aplicação
 
-    ```text
-    https://your.app.domain/webhook/twitter
-    ```
-
-6. Take note of the deployed URL, revisit your apps.twitter.com **Settings** page, and add the following URL values as whitelisted Callback URLs:
-
-    ```text
-    http(s)://your.app.domain/callbacks/addsub
-    http(s)://your.app.domain/callbacks/removesub
-    ```
-
-## Configure webhook to receive events
-
-To configure your webhook you can use this apps' web UI, or use the example scripts from the command line.
-
-### Using the web UI
-
-Load the web app in your browser and follow the instructions below.
-
-1. Setup webhook config. Navigate to the "manage webhook" view. Enter your webhook URL noted earlier and click "Create/Update."
-
-2. Add a user subscription. Navigate to the "manage subscriptions" view. Click "add" and proceed with Twitter sign-in. Once complete your webhook will start to receive account activity events for the user.
-
-### Using the command line example scripts
-
-These scripts should be executed from root of the project folder. Your environment, url or webhook ID should be passed in as command line arguments.
-
-1. Create webhook config.
-
-    ```bash
-    node example_scripts/webhook_management/create-webhook-config.js -e <environment> -u <url>
-    ```
-
-2. Add a user subscription for the user that owns the app.
-
-    ```bash
-    node example_scripts/subscription_management/add-subscription-app-owner.js -e <environment>
-    ```
-
-3. To add a user subscription for another user using PIN-based Twitter sign-in.
-
-    ```bash
-    node example_scripts/subscription_management/add-subscription-other-user.js -e <environment>
-    ```
-
-**Note:** More example scripts can be found in the [example_scripts](example_scripts) directory to:
-
-* Create, delete, retrieve and validate webhook configs.
-* Add, remove, retrieve, count and list user subscriptions.
-
-## Deploy to Heroku (optional)
-
-1. Init Heroku app.
-
-    ```bash
-    heroku create
-    ```
-
-2. Run locally.
-
-    ```text
-    heroku local
-    ```
-
-3. Configure environment variables. Set up an environment variable for every property on config.json. See Heroku documentation on [Configuration and Config Vars](https://devcenter.heroku.com/articles/config-vars).
-
-4. Deploy to Heroku.
-
-    ```bash
-    git push heroku master
-    ```
-
-**Note:** The free tier of Heroku will put your app to sleep after 30 minutes. On cold start, you app will have very high latency which may result in a CRC failure that deactivates your webhook. To trigger a challenge response request and re-validate, run the following script.
+1. Clone esse repositório
 
 ```bash
-node example_scripts/webhook_management/validate-webhook-config.js -e <environment> -i <webhook_id>
+git clone https://github.com/AppCivico/Twitter-Chatbot.git
 ```
 
-## Production considerations
+2. Instale as dependências do Node.js:
 
-This app is for demonstration purposes only, and should not be used in production without further modifcations. Dependencies on databases, and other types of services are intentionally not within the scope of this sample app. Some considerations below:
+```bash
+npm install
+```
 
-* With this basic application, user information is stored in server side sessions. This may not provide the best user experience or be the best solution for your use case, especially if you are adding more functionality.
-* The application can handle light usage, but you may experience API rate limit issues under heavier load. Consider storing data locally in a secure database, or caching requests.
-* To support multiple users (admins, team members, customers, etc), consider implementing a form of Access Control List for better security.
+3. Crie um novo arquivo `config.json` baseado no `config.sample.json` e preencha as chaves e tokens do seu App e o nome do ambiente do seu webhook (exemplo: TWITTER_WEBHOOK_ENV:"Teste"). As chaves e tokens de acesoo do seu App podem ser encontradas em [apps.twitter.com](https://apps.twitter.com/). USER e PASSWORD podem ser o que você quiser, e são usadas como uma simples proteção por senha para a interface web de configuração.
+
+4. Execute localmente (por padrão, ele utilizará a porta 5000):
+
+```bash
+npm start
+```
+
+5. Configure um túnel ao localhost com [ngrok](https://ngrok.com/) ou similar.
+
+```bash
+./ngrok http 5000
+```
+
+Guarde a URL do seu webhook. Por exemplo:
+
+```text
+https://9eb889bb.ngrok.io
+```
+
+6. Com essa URL, revisite seu App, vá em **Settings**, e adicione as seguintes URLs como URLS de callback permitidas (Não esqueça de salvar as mudanças com "Update Settings" na parte de baixo):
+
+```text
+https://9eb889bb.ngrok.io/callbacks/addsub
+https://9eb889bb.ngrok.io/callbacks/removesub
+```
+
+## Configure seu webhook para receber eventos
+
+Para configurar seu webhook você pode usar a interface web do aplicativo ou os scripts de exemplo da linha de comando. Deixe o servidor Express rodando para tudo funcione.
+
+### Usando os scripts de exemplo
+
+Esses scripts devem ser executados da raiz da pasta do seu projeto. Seu ambiente, url ou webhook devem ser passado como argumentos na linha de comando.
+
+1. Criar a configuração do webhook.
+
+```bash
+node example_scripts/webhook_management/create-webhook-config.js -e <ambiente> -u <url>
+```
+
+Onde <ambiente> é o rótulo do webhook(e.g. "Teste") e <url> é a url do seu webhook + /webhook/twitter. 
+Importante: nesse projeto, o [arquivo responsável] já inclui a parte do '/webhook/twitter'm então você só precisa de:
+```bash
+node example_scripts/webhook_management/create-webhook-config.js -e Teste -u https://9eb889bb.ngrok.io
+```
+
+**Obs:** para adicionar um novo webhook será necessário deletar o antigo primeiro com:
+```bash
+node example_scripts/webhook_management/delete-webhook-config.js -e <ambiente>
+```
+
+2. Adicione uma inscrição do aplicativo para o usuário dono do aplicativo (você?). No acesso gratuito ao Account Activity API o limite é de 15 inscrições.
+
+```bash
+node example_scripts/subscription_management/add-subscription-app-owner.js -e <ambiente>
+```
+
+3. Para adicionar a inscrição de um usuário qualquer utilize o login baseado em PIN com o seguinte comando:
+
+```bash
+node example_scripts/subscription_management/add-subscription-other-user.js -e <ambiente>
+```
+Mande o link para o usuário, ele deverá logar-se e te devolver o PIN. Entre com o PIN no terminal e anote os access_token e access_token secret para registrar no oauth.
+
+**Note:** Mais scripts podem sem encontrados em [example_scripts](example_scripts), incluindo:
+
+* Criar, deletar, visualizar e validar a configuração do webhook.
+* Adicionar, remover, visualizar, contar e listar inscrições dos.
+
+### Usando a interface web
+
+Carregue a interface no seu navegador (localhost:5000) e siga as instruções abaixo:
+
+1. Configuração do webhook. Navegue para "manage webhook". Entre sua URL do webhook e clique em "Create/Update."
+
+2. Adicione um usuário. Navegue até "manage subscriptions". Clique em "add" e siga com o Login do Twitter. Assim que completa seu webhook irá começar a receber os eventos da atividade da conta do usuário.
+
+## Oauth?
+
+Cada usuário precisa de sua própria autenticação para que esse chatbot possa agir em seu nome. Ao realizar a inscrição do usuário (com o PIN, por exemplo) o access_token e o access_token secret serão usados para autenticação. No caso, eles são vinculados a um Twitter ID. A classe responsável é a [auth-other-user.js](https://github.com/AppCivico/Twitter-Chatbot/blob/master/helpers/auth-other-user.js). 
+
+## Mensagem de Boas-Vindas?
+
+Foi escrito um [script](https://github.com/AppCivico/Twitter-Chatbot/blob/master/example_scripts/misc/create-welcome-message.js) para ajudar nessa questão. O que ele faz é apagar todas as mensagens e regras que o usuário já tem e carregar o novo texto da API já criando a regra e configurando essa mensagem como ativa. Execute-o da seguinte maneira: 
+
+```bash
+node example_scripts/misc/create-welcome-message.js -t <ID>
+```
+
+Sendo <ID> o Twitter ID do usuário.
+

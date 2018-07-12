@@ -3,7 +3,7 @@ Setting up Twitter Account Api (Premium - Free Tier)
 https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/guides/getting-started-with-webhooks
 
 0.
-Aplly for beta access here: https://developer.twitter.com/en/apply
+Apply for beta access here: https://developer.twitter.com/en/apply
 
 1.
 Create an app on https://apps.twitter.com/
