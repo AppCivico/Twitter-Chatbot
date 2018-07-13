@@ -12,7 +12,6 @@ const socket = require('./helpers/socket');
 
 const app = express();
 // let msgToIgnore;
-// const ourUsers = process.env.OUR_USERS.split(',');
 
 const mp = require('./message_processor');
 // const Request = require('request-promise');
@@ -34,7 +33,8 @@ app.use(session({
 
 // start server
 const server = app.listen(app.get('port'), () => {
-	console.log('Node app is running on port', app.get('port'));
+	console.log('Twitter App Owner =>', process.env.APP_OWNER);
+	console.log('Node app is running on port => ', app.get('port'));
 });
 
 // initialize socket.io
@@ -42,7 +42,6 @@ socket.init(server);
 
 // form parser middleware
 const parseForm = bodyParser.urlencoded({ extended: false });
-
 
 /**
  * Receives challenge response check (CRC)

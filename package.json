@@ -20,7 +20,6 @@
     "express-session": "^1.15.6",
     "http-auth": "^3.2.3",
     "memory-cache": "^0.2.0",
-    "nconf": "^0.8.4",
     "passport": "^0.4.0",
     "passport-twitter": "^1.0.4",
     "prompt-promise": "^1.0.3",

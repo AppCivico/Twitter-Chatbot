@@ -64,7 +64,10 @@ mp.checkType = async (payload, users) => {
 			${politicianData.name} pelos seguintes canais:`);
 			if (politicianData.contact.email) { await twitter.sendTextDM(data, `- Através do e-mail: ${politicianData.contact.email}`); }
 			if (politicianData.contact.cellphone) { await twitter.sendTextDM(data, `- Através do WhatsApp: ${politicianData.contact.cellphone}`); }
-			if (politicianData.contact.url) { await twitter.sendTextDM(data, `- Através do site: ${politicianData.contact.url}`); }
+			if (politicianData.contact.url) {
+				await twitter.sendTextDM(data, '- Através do site:');
+				await twitter.sendTextDM(data, politicianData.contact.url);
+			}
 			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]));
 			break;
 		}
