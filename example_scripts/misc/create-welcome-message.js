@@ -49,7 +49,7 @@ function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 	if (!politicianData.votolegal_integration) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 	dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 	dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
-	dialogs.filter(obj => obj.metadata !== 'answerPoll');
+	dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
 	return dialogs;
 }
 
