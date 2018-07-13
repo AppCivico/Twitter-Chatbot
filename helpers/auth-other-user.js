@@ -1,4 +1,4 @@
-const nconf = require('nconf');
+require('dotenv').config();
 const request = require('request');
 const queryString = require('query-string');
 const passport = require('passport');
@@ -7,27 +7,30 @@ const httpAuth = require('http-auth');
 
 // this is used only for autheticating all subscribed users.
 // Both oauthToken and tokenSecret must be vinculated to a twitter_id in the database before.
+
 // load config
-nconf.file({ file: 'config.json' }).env();
+const consumerKey = process.env.TWITTER_CONSUMER_KEY;
+const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
+const webhookEnv = process.env.TWITTER_WEBHOOK_ENV;
+const authUser = process.env.BASIC_AUTH_USER;
+const authPass = process.env.BASIC_AUTH_PASSWORD;
 
 const auth = {};
 
 function getAuth(data) { // userID means politicianID
 	auth.twitter_oauth = {
-		consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
-		consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
+		consumer_key: consumerKey,
+		consumer_secret: consumerSecret,
 		token: data.oauthToken,
 		token_secret: data.tokenSecret,
-		// 		token: nconf.get('OTHER_USER1_TOKEN'),
-		// 		token_secret: nconf.get('OTHER_USER1_SECRET'),
 	};
-	auth.twitter_webhook_environment = nconf.get('TWITTER_WEBHOOK_ENV');
+	auth.twitter_webhook_environment = webhookEnv;
 
 	// basic auth middleware for express
 	auth.basic = httpAuth.connect(httpAuth.basic({
 		realm: 'admin-dashboard',
 	}, (username, password, callback) => {
-		callback(username === nconf.get('BASIC_AUTH_USER') && password === nconf.get('BASIC_AUTH_PASSWORD'));
+		callback(username === authUser && password === authPass);
 	}));
 
 	// csrf protection middleware for express
@@ -63,7 +66,7 @@ function getAuth(data) { // userID means politicianID
  * Retrieves a Twitter Sign-in auth URL for OAuth1.0a
  */
 	auth.get_twitter_auth_url = (host, callbackction) => {
-	// construct request to retrieve authorization token
+		// construct request to retrieve authorization token
 		const requestOptions = {
 			url: 'https://api.twitter.com/oauth/request_token',
 			method: 'POST',
@@ -79,7 +82,7 @@ function getAuth(data) { // userID means politicianID
 				if (error) {
 					reject(error);
 				} else {
-				// construct sign-in URL from returned authorization token
+					// construct sign-in URL from returned authorization token
 					const responseParams = queryString.parse(response.body);
 					console.log(responseParams);
 					const twitterAuthUrl = `https://api.twitter.com/oauth/authenticate?force_login=true&oauth_token=${responseParams.oauth_token}`;
@@ -97,9 +100,9 @@ function getAuth(data) { // userID means politicianID
  * Retrieves a bearer token for OAuth2
  */
 	auth.get_twitter_bearer_token = () => {
-	// just return the bearer token if we already have one
+		// just return the bearer token if we already have one
 		if (auth.twitter_bearer_token) {
-		// return new Promise(((resolve, reject) => {
+			// return new Promise(((resolve, reject) => {
 			return new Promise(((resolve) => {
 				resolve(auth.twitter_bearer_token);
 			}));

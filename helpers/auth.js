@@ -1,4 +1,4 @@
-const nconf = require('nconf');
+require('dotenv').config();
 const request = require('request');
 const queryString = require('query-string');
 const passport = require('passport');
@@ -6,26 +6,33 @@ const TwitterStrategy = require('passport-twitter');
 const httpAuth = require('http-auth');
 
 // this is used only for autheticating the app owner
+
 // load config
-nconf.file({ file: 'config.json' }).env();
+const consumerKey = process.env.TWITTER_CONSUMER_KEY;
+const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
+const acessToken = process.env.TWITTER_ACCESS_TOKEN;
+const accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET;
+const webhookEnv = process.env.TWITTER_WEBHOOK_ENV;
+const authUser = process.env.BASIC_AUTH_USER;
+const authPass = process.env.BASIC_AUTH_PASSWORD;
 
 const auth = {};
 
 // twitter info
 auth.twitter_oauth = {
-	consumer_key: nconf.get('TWITTER_CONSUMER_KEY'),
-	consumer_secret: nconf.get('TWITTER_CONSUMER_SECRET'),
-	token: nconf.get('TWITTER_ACCESS_TOKEN'),
-	token_secret: nconf.get('TWITTER_ACCESS_TOKEN_SECRET'),
+	consumer_key: consumerKey,
+	consumer_secret: consumerSecret,
+	token: acessToken,
+	token_secret: accessTokenSecret,
 };
-auth.twitter_webhook_environment = nconf.get('TWITTER_WEBHOOK_ENV');
+auth.twitter_webhook_environment = webhookEnv;
 
 
 // basic auth middleware for express
 auth.basic = httpAuth.connect(httpAuth.basic({
 	realm: 'admin-dashboard',
 }, (username, password, callback) => {
-	callback(username === nconf.get('BASIC_AUTH_USER') && password === nconf.get('BASIC_AUTH_PASSWORD'));
+	callback(username === authUser && password === authPass);
 }));
 
 

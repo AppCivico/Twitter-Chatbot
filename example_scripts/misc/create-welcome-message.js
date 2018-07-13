@@ -7,15 +7,17 @@ const maApi = require('../../utils/mandatoaberto_api');
 const Articles = require('../../utils/articles');
 const opt = require('../../utils/options');
 
-
 let theList;
 let requestOptions;
 
+// This a helper cli script, pass the -t twitterUserID argument to change the welcome-message
+// You can find the welcome_message settings to edit down below;
+// What we are doing here:
+// getting every welcome_message the user has and deleting them all
+// getting the current rule and also deleting it
+// then we can create a new welcome_message and a new rule using the last created welcome_message.id
 
-/**
- * Sets up command line arguments for
- * all example scripts
- */
+// Sets up command line arguments for this helper script
 const optionDefinitions = [
 	{ name: 'twitterUserID', alias: 't', type: String },
 ];
@@ -29,19 +31,13 @@ if (!twitterUserID) {
 	process.exit(-1);
 }
 
-// This a helper cli script, pass the -t twitterUserID argument to change the welcome-message
-// You can find the welcome_message settings to edit down below;
-// What we are doing here:
-// getting every welcome_message the user has and deleting them all
-// getting the current rule and also deleting it
-// then we can create a new welcome_message and a new rule using the last created welcome_message.id
-
 let politicianData;
 let trajectory;
 let introduction;
 // let pollData;
 let greeting;
 const data = {};
+
 function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
 	let dialogs = opt2;
 	if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
@@ -96,6 +92,7 @@ async function deleteMessages(list) { // eslint-disable-line no-unused-vars
 		});
 	});
 }
+
 async function deleteRules(list) {
 	// request options
 	console.log('Deleting => ', list.welcome_message_rules[0].id);
@@ -106,7 +103,6 @@ async function deleteRules(list) {
 			id: list.welcome_message_rules[0].id,
 		},
 	};
-
 
 	await request.delete(options).then(() => {
 		console.log('Success! => ', list.welcome_message_rules[0].id);
@@ -135,7 +131,6 @@ async function createRule(id) {
 		console.log("Error. Couldn't create new rule! Try again! =>", response.message);
 	});
 }
-
 
 async function createMessage() {
 	await loadData();
@@ -172,7 +167,6 @@ async function createMessage() {
 		},
 	};
 
-
 	await request.get(requestOptions).then((response) => {
 		// console.log('HTTP response code:', response);
 		theList = JSON.parse(response);
@@ -184,13 +178,6 @@ async function createMessage() {
 	}).catch((response) => {
 		console.log("Couldn't get rules list =>", response.message);
 	});
-
-
-	// const politicianData2 = await maApi.getPoliticianData(pageID);
-	// let greeting = await politicianData2.greeting.replace('${user.office.name}',
-	// politicianData2.office.name); // eslint-disable-line no-template-curly-in-string
-	// greeting = await greeting.replace('${user.name}', politicianData2.name);
-	// eslint-disable-line no-template-curly-in-string
 
 	const welcomeData = {
 		text: `${greeting}\nUtilize os botões abaixo para interagir:`,
