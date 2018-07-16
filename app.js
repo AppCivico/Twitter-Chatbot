@@ -2,7 +2,6 @@ require('dotenv').config();
 // const TwitterStrategy = require('passport-twitter');
 const express = require('express');
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const uuid = require('uuid/v4');
@@ -20,9 +19,6 @@ app.set('port', (process.env.PORT || 5000));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 
-const fileSessionOptions = {
-	path: './.sessions',
-};
 app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,8 +26,7 @@ app.use(passport.initialize());
 app.use(session({
 	secret: process.env.EXPRESS_SESSION_SECRET,
 	resave: true,
-	saveUninitialized: false,
-	store: new FileStore(fileSessionOptions),
+	saveUninitialized: true,
 }));
 
 // start server
@@ -69,11 +64,6 @@ app.get('/webhook/twitter', (request, response) => {
  * Receives Account Acitivity events
  * */
 app.post('/webhook/twitter', (req, response) => {
-	if (req.session.age) {
-		console.log(req.session.age);
-	} else {
-		req.session.age = 11;
-	}
 	// console.log(req.session);
 	// console.log('\n\nNós recebemos isso:');
 	// console.log(req.body);
