@@ -63,3 +63,7 @@ typings/
 # Project files
 config.json
 package-lock.json
+
+# Session files
+sessions
+.sessions

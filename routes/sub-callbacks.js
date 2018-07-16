@@ -2,7 +2,6 @@ const request = require('request-promise');
 // const passport = require('passport');
 const auth = require('../helpers/auth.js');
 
-
 const subRequestOptions = {
 	url: `https://api.twitter.com/1.1/account_activity/all/${auth.twitter_webhook_environment}/subscriptions.json`,
 	oauth: auth.twitter_oauth,
@@ -68,4 +67,3 @@ module.exports = (req, resp) => {
 		resp.render('status', jsonResponse);
 	}
 };
-

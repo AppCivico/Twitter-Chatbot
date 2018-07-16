@@ -13,4 +13,3 @@ function formatReal(int) {
 
 module.exports.formatReal = formatReal;
 module.exports.format = str => formatReal(getMoney(str));
-
