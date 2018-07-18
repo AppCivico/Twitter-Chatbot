@@ -1,5 +1,5 @@
 const request = require('request-promise');
-// const passport = require('passport');
+const passport = require('passport'); // eslint-disable-line no-unused-vars
 const auth = require('../helpers/auth.js');
 
 const subRequestOptions = {
@@ -9,7 +9,6 @@ const subRequestOptions = {
 };
 
 const actions = {};
-
 actions.addsub = (user) => {
 	subRequestOptions.oauth.token = user.access_token;
 	subRequestOptions.oauth.token_secret = user.access_token_secret;
