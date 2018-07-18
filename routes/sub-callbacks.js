@@ -1,7 +1,6 @@
 const request = require('request-promise');
-// const passport = require('passport');
+const passport = require('passport'); // eslint-disable-line no-unused-vars
 const auth = require('../helpers/auth.js');
-
 
 const subRequestOptions = {
 	url: `https://api.twitter.com/1.1/account_activity/all/${auth.twitter_webhook_environment}/subscriptions.json`,
@@ -10,7 +9,6 @@ const subRequestOptions = {
 };
 
 const actions = {};
-
 actions.addsub = (user) => {
 	subRequestOptions.oauth.token = user.access_token;
 	subRequestOptions.oauth.token_secret = user.access_token_secret;
@@ -68,4 +66,3 @@ module.exports = (req, resp) => {
 		resp.render('status', jsonResponse);
 	}
 };
-

@@ -18,6 +18,7 @@
     "eslint": "^4.19.1",
     "express": "4.13.3",
     "express-session": "^1.15.6",
+    "fs-extra": "^6.0.1",
     "http-auth": "^3.2.3",
     "memory-cache": "^0.2.0",
     "passport": "^0.4.0",
@@ -27,6 +28,7 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "requisition": "^1.7.0",
+    "session-file-store": "^1.2.0",
     "socket.io": "2.0.4",
     "uuid": "^3.2.1"
   },

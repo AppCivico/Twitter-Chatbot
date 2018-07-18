@@ -1,8 +1,8 @@
 require('dotenv').config();
 // const TwitterStrategy = require('passport-twitter');
 const express = require('express');
-const bodyParser = require('body-parser');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const passport = require('passport');
 const uuid = require('uuid/v4');
 const security = require('./helpers/security');
@@ -14,8 +14,6 @@ const app = express();
 // let msgToIgnore;
 
 const mp = require('./message_processor');
-// const Request = require('request-promise');
-// const userOauth = require('./helpers/auth-other-user');
 
 app.set('port', (process.env.PORT || 5000));
 app.set('views', `${__dirname}/views`);
@@ -27,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(session({
 	secret: process.env.EXPRESS_SESSION_SECRET,
-	resave: false,
+	resave: true,
 	saveUninitialized: true,
 }));
 
@@ -65,23 +63,24 @@ app.get('/webhook/twitter', (request, response) => {
 /* *
  * Receives Account Acitivity events
  * */
-app.post('/webhook/twitter', (request, response) => {
+app.post('/webhook/twitter', (req, response) => {
+	// console.log(req.session);
 	// console.log('\n\nNós recebemos isso:');
-	// console.log(request.body);
-	if (request.body.direct_message_indicate_typing_events) {
+	// console.log(req.body);
+	if (req.body.direct_message_indicate_typing_events) {
 		// console.log('Um usuário externo está digitando');
-	} else if (request.body.direct_message_events) {
-		// const recipientId = request.body.direct_message_events[0].message_create.target.recipient_id;
-		// const senderId = request.body.direct_message_events[0].message_create.sender_id;
+	} else if (req.body.direct_message_events) {
+		// const recipientId = req.body.direct_message_events[0].message_create.target.recipient_id;
+		// const senderId = req.body.direct_message_events[0].message_create.sender_id;
 
 		// if: event is not happening to the same user who started it
-		if (request.body.direct_message_events[0].message_create.sender_id !== request.body.for_user_id) { // eslint-disable-line max-len
-			mp.checkType(request.body.direct_message_events[0].message_create, request.body.users);
+		if (req.body.direct_message_events[0].message_create.sender_id !== req.body.for_user_id) { // eslint-disable-line max-len
+			mp.checkType(req.body.direct_message_events[0].message_create, req.body.users);
 		}
 
 		socket.io.emit(socket.activity_event, {
 			internal_id: uuid(),
-			event: request.body,
+			event: req.body,
 		});
 
 		response.send('200 OK');

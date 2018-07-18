@@ -10,6 +10,17 @@
             "error",
             "tab"
         ],
-        "no-tabs": 0
+        "no-tabs": 0,
+        "default-case": 0,
+        "max-len": [
+            "error",
+            150,
+            {
+                "code": 120,
+                "ignoreUrls": true,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true
+            }
+        ]
     }
 }

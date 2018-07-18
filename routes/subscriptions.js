@@ -9,17 +9,17 @@ module.exports = (req, response) => {
 	// get list of subs
 	auth.get_twitter_bearer_token().then((bearerToken) => {
 		savedBearerToken = bearerToken;
-		const requestPptions = {
+		const requestOptions = {
 			url: `https://api.twitter.com/1.1/account_activity/all/${auth.twitter_webhook_environment}/subscriptions/list.json`,
 			auth: {
 				bearer: savedBearerToken,
 			},
 		};
 
-		return request.get(requestPptions);
+		return request.get(requestOptions);
 	})
 
-	// hydrate user objects from IDs
+		// hydrate user objects from IDs
 		.then((body) => {
 			jsonResponse = JSON.parse(body);
 			const jsonBody = jsonResponse;
@@ -40,18 +40,18 @@ module.exports = (req, response) => {
 				}
 			});
 
-			const requestPptions = {
-				url: `https://api.twitter.com/1.1/users/lookup.json?userId=${userId}`,
+			const requestOptions = {
+				url: `https://api.twitter.com/1.1/users/lookup.json?user_id=${userId}`,
 				auth: {
 					bearer: savedBearerToken,
 				},
 			};
 
-			return request.get(requestPptions);
+			return request.get(requestOptions);
 		})
 
-	// replace the subscriptions list with list of user objects
-	// and render list
+		// replace the subscriptions list with list of user objects
+		// and render list
 		.then((body) => {
 			// only render if we didn't skip user hydration
 			if (body) {
@@ -59,6 +59,7 @@ module.exports = (req, response) => {
 				response.render('subscriptions', jsonResponse);
 			}
 		})
+
 		.catch((body) => {
 			console.log(body);
 
