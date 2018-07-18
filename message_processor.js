@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+// const fs = require('fs-extra');
 const twitter = require('./utils/twitter');
 const opt = require('./utils/options');
 const maApi = require('./utils/mandatoaberto_api');
@@ -21,22 +21,22 @@ mp.checkType = async (payload, users) => {
 	data.politicianName = users[data.politicianID].name;
 	data.userName = users[data.userID].name;
 
-	const path = `./.sessions/${data.politicianID}-${data.userID}.json`;
+	// const path = `./.sessions/${data.politicianID}-${data.userID}.json`;
 
-	if (!(await fs.pathExists(path))) {
-		await fs.outputJson(path,
-			{
-				politicianName: data.politicianName,
-				politicianID: data.politicianID,
-				userName: data.userName,
-				userID: data.userID,
-				state: undefined, // user still doesn't have a state worth saving
-				eMail: undefined, // nor an e-mail
-				phoneNumber: undefined, // nor a phone number
-				createdAt: Date.now(),
-				modifiedAt: Date.now(),
-			});
-	}
+	// if (!(await fs.pathExists(path))) {
+	// 	await fs.outputJson(path,
+	// 		{
+	// 			politicianName: data.politicianName,
+	// 			politicianID: data.politicianID,
+	// 			userName: data.userName,
+	// 			userID: data.userID,
+	// 			state: undefined, // user still doesn't have a state worth saving
+	// 			eMail: undefined, // nor an e-mail
+	// 			phoneNumber: undefined, // nor a phone number
+	// 			createdAt: Date.now(),
+	// 			modifiedAt: Date.now(),
+	// 		});
+	// }
 
 
 	const politicianData = await maApi.getPoliticianData('twitter', data.politicianID);
