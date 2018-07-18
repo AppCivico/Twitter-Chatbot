@@ -12,21 +12,16 @@ ENV NPM_CONFIG_LOGLEVEL warn
 
 EXPOSE 5000
 
-USER root
-RUN npm install
-RUN useradd -ms /bin/bash app
-
 RUN apt-get update
 RUN apt-get install -y runit
 
 COPY . /src
-RUN chown -R app:app /src
+RUN chown -R node:node /src
 
 WORKDIR /src
 
-USER app
+USER node
 RUN npm install
-RUN npm install dotenv
 
 USER root
 COPY services/ /etc/service/
