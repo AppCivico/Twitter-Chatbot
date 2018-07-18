@@ -2,6 +2,9 @@ const request = require('request-promise');
 const auth = require('../../helpers/auth.js');
 const args = require('../args.js');
 
+if (args.url.slice(-1) === '/') {
+	args.url = args.url.slice(0, -1);
+}
 
 // request options
 const requestOptions = {
