@@ -19,14 +19,18 @@ module.exports = {
 
 
 	async getPollData(pageId) {
-		const res = await request(`${apiUri}/api/chatbot/poll?fb_page_id=${pageId}&security_token=${securityToken}`);
+		const res = await request(`${apiUri}/api/chatbot/poll?twitter_id=${pageId}&security_token=${securityToken}`);
 		const pollData = await res.json();
 		return pollData;
 	},
 
-	async postRecipient(userId, recipient) {
+	async postRecipient(platform, userId, politicianId, recipient) {
 		const recipientDataQs = queryString.stringify(recipient);
-		const res = await request.post(`${apiUri}/api/chatbot/recipient?${recipientDataQs}&security_token=${securityToken}&`).query({ politicianId: userId });
+		console.log(platform);
+		console.log(politicianId);
+		console.log(userId);
+
+		const res = await request.post(`${apiUri}/api/chatbot/recipient?${recipientDataQs}&platform=${platform}&twitter_id=${userId}&politician_id=${politicianId}&security_token=${securityToken}`);
 		const recipientData = await res.json();
 		return recipientData;
 	},

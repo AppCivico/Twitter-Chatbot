@@ -42,12 +42,18 @@ mp.checkType = async (payload, users) => {
 	const politicianData = await maApi.getPoliticianData('twitter', data.politicianID);
 	data.oauthToken = politicianData.twitter_oauth_token;
 	data.tokenSecret = politicianData.twitter_token_secret;
-	console.log(politicianData);
+	// console.log(politicianData);
 	let articles;
 	if (politicianData.gender === 'F') { articles = Articles.feminine; } else { articles = Articles.masculine; }
 	const trajectory = await maApi.getAnswer(politicianData.user_id, 'trajectory');
 	const introduction = await maApi.getAnswer(politicianData.user_id, 'introduction');
-	const pollData = await maApi.getPollData(data.politicianID);
+	// const pollData = await maApi.getPollData(data.politicianID);
+	// console.log(data.userID);
+	// console.log(politicianData.user_id);
+	const recipient = await maApi.postRecipient('twitter', data.userID, politicianData.user_id, {
+		name: data.userName,
+	});
+	console.log(recipient);
 
 	if (politicianData.office.name === 'Outros' || politicianData.office.name === 'Candidato' || politicianData.office.name === 'Candidata') {
 		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
@@ -60,14 +66,14 @@ mp.checkType = async (payload, users) => {
 		let dialogs = opt2;
 		if (!introduction) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutPolitician'); }
 		if (!trajectory) { dialogs = dialogs.filter(obj => obj.metadata !== 'aboutTrajectory'); }
-		if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
+		// if (!pollData) { dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll'); }
 		if (!politicianData.contact) { dialogs = dialogs.filter(obj => obj.metadata !== 'contact'); }
 		// if (!politicianData.votolegal_integration.votolegal_username)
 		// { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		if (!politicianData.votolegal_integration) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 		dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
-		dialogs.filter(obj => obj.metadata !== 'answerPoll');
+		// dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
 		return dialogs;
 	}
 
@@ -104,21 +110,21 @@ mp.checkType = async (payload, users) => {
 			await twitter.sendTextDM(data, 'Tudo está bem com o mundo.');
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
 			break;
-		case 'answerPoll': { // no-case-declarations
-			const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
-			if (recipientAnswer.recipient_answered >= 1) {
-				await twitter.sendTextDM(data, 'Ah, que pena! Você já respondeu essa pergunta.');
-				await twitter.sendQuickReplyDM(data, 'Se quiser, eu posso te ajudar com outra coisa.',
-					await checkMenu([
-						opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]));
-			} else {
-				await twitter.sendTextDM(data, 'Quero conhecer você melhor. Deixe sua resposta '
-			+ 'e participe deste debate.');
-				await twitter.sendQuickReplyDM(data, `Pergunta: ${pollData.questions[0].content}`, [
-					{ label: pollData.questions[0].options[0].content,	metadata: 'pollOption0'	},
-					{ label: pollData.questions[0].options[1].content,	metadata: 'pollOption1'	}]);
-			}
-			break;	}
+		// case 'answerPoll': { // no-case-declarations
+		// 	const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
+		// 	if (recipientAnswer.recipient_answered >= 1) {
+		// 		await twitter.sendTextDM(data, 'Ah, que pena! Você já respondeu essa pergunta.');
+		// 		await twitter.sendQuickReplyDM(data, 'Se quiser, eu posso te ajudar com outra coisa.',
+		// 			await checkMenu([
+		// 				opt.participate, opt.aboutPolitician, opt.aboutTrajectory, opt.contact]));
+		// 	} else {
+		// 		await twitter.sendTextDM(data, 'Quero conhecer você melhor. Deixe sua resposta '
+		// 	+ 'e participe deste debate.');
+		// 		await twitter.sendQuickReplyDM(data, `Pergunta: ${pollData.questions[0].content}`, [
+		// 			{ label: pollData.questions[0].options[0].content,	metadata: 'pollOption0'	},
+		// 			{ label: pollData.questions[0].options[1].content,	metadata: 'pollOption1'	}]);
+		// 	}
+		// 	break;	}
 		case 'pollOption0':
 			// falls through
 		case 'pollOption1': {
