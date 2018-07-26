@@ -13,8 +13,8 @@ module.exports = {
 
 	async getPoliticianDataFromPageID(pageId) {
 		const res = await request(`${apiUri}/api/chatbot/politician?fb_page_id=${pageId}&security_token=${securityToken}`);
-		const politicianData = await res.json();
-		return politicianData;
+		const politicianData2 = await res.json();
+		return politicianData2;
 	},
 
 
