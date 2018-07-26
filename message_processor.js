@@ -53,7 +53,7 @@ mp.checkType = async (payload, users) => {
 		opt.aboutPolitician.label = `Sobre ${articles.defined} líder`;
 	} else {
 		// unlike facebook, twitter allows for more than 20 chars at 'label'
-		opt.aboutPolitician.label = `Sobre  ${articles.defined} ${politicianData.office.name}`;
+		opt.aboutPolitician.label = `Sobre ${articles.defined} ${politicianData.office.name}`;
 	}
 
 	function checkMenu(opt2) { // eslint-disable-line no-inner-declarations
