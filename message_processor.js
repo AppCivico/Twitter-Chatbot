@@ -69,7 +69,7 @@ mp.checkType = async (payload, users) => {
 		if (!politicianData.votolegal_integration) { dialogs = dialogs.filter(obj => obj.metadata !== 'participate'); }
 		dialogs = dialogs.filter(obj => obj.metadata !== 'news');
 		dialogs = dialogs.filter(obj => obj.metadata !== 'divulgate');
-		// dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
+		dialogs = dialogs.filter(obj => obj.metadata !== 'answerPoll');
 		return dialogs;
 	}
 
