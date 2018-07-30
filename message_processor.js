@@ -89,22 +89,22 @@ mp.checkType = async (payload, users) => {
 				await twitter.sendTextDM(data, '- Através do site:');
 				await twitter.sendTextDM(data, politicianData.contact.url);
 			}
-			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.aboutTrajectory, opt.answerPoll, opt.participate, opt.news]));
+			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.aboutTrajectory, opt.participate, opt.news]));
 			break;
 		}
 		case 'aboutTrajectory':
 			await twitter.sendTextDM(data, trajectory.content);
-			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.contact, opt.answerPoll, opt.participate, opt.news]));
+			await twitter.sendQuickReplyDM(data, 'Quer saber mais?', await checkMenu([opt.contact, opt.participate, opt.news]));
 			break;
 		case 'aboutPolitician':
 			await twitter.sendTextDM(data, introduction.content);
 			await twitter.sendQuickReplyDM(data, `O que mais deseja saber sobre ${articles.defined} pré-candidato?`, await checkMenu([
-				opt.aboutTrajectory, opt.contact, opt.answerPoll, opt.participate]));
+				opt.aboutTrajectory, opt.contact, opt.participate]));
 			break;
 		case 'news':
 			await twitter.sendTextDM(data, 'Não há nada de novo no front.');
 			await twitter.sendTextDM(data, 'Tudo está bem com o mundo.');
-			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
+			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([opt.contact, opt.aboutTrajectory, opt.participate]));
 			break;
 			// case 'answerPoll': { // no-case-declarations
 			// 	const recipientAnswer = await maApi.getPollAnswer(data.userID, pollData.id);
@@ -160,18 +160,18 @@ mp.checkType = async (payload, users) => {
 		}
 		case 'goBack':
 			await twitter.sendQuickReplyDM(data, 'Como posso te ajudar?', await checkMenu([
-				opt.contact, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
+				opt.contact, opt.aboutTrajectory, opt.participate]));
 			break;
 		default:
 			await twitter.sendQuickReplyDM(data, 'Perdão. Parece que ocorreu um erro. Clique em um dos botões ou me mande uma mensagem.\n'
 					+ 'Se o problema persistir, apague a conversa e me mande uma nova mensagem.', await checkMenu([
-				opt.aboutPolitician, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
+				opt.aboutPolitician, opt.aboutTrajectory, opt.participate]));
 			break;
 		}
 	} else { // user sent text?
 		// const msgText = payload.message_data.text;
 		await twitter.sendQuickReplyDM(data, 'Perdão. Não entendo texto ainda, clique nos botões abaixo para interagir comigo.', await checkMenu([
-			opt.aboutPolitician, opt.aboutTrajectory, opt.answerPoll, opt.participate]));
+			opt.aboutPolitician, opt.aboutTrajectory, opt.participate]));
 	}
 
 	// console.log('------------------------');
